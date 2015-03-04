@@ -46,12 +46,15 @@ class Sensor(object):
     Sensor Object
     """
 
-    def __init__(self, controller_id, node_id, sensor_id, sensor_type, name):
+    def __init__(self, controller_id, node_id, sensor_id, sensor_type, name,
+                 latest_data=None, last_update=None):
         self.controller_id = controller_id
         self.node_id = node_id
         self.sensor_id = sensor_id
         self.sensor_type = sensor_type
         self.name = name
+        self.latest_data = latest_data
+        self.last_update = last_update
         #self.interval = interval
 
 

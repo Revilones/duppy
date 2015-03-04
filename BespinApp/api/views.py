@@ -232,12 +232,20 @@ class SensorView(APIView):
                 node=node,
                 sensor_id=sensor_id)
 
+        data = sensor.data_set.latest("created")
+        latest_data = data.payload if data else None
+        last_update = data.created if data else None
+
+
+
         response = Sensor(
                 controller_id=controller.controller_id,
                 node_id=node.node_id,
                 sensor_id=sensor.sensor_id,
                 sensor_type=sensor.sensor_type,
-                name=sensor.name)
+                name=sensor.name,
+                latest_data=latest_data,
+                last_update=last_update)
 
         serializer = SensorSerializer(response)
         return Response(serializer.data)
@@ -270,7 +278,9 @@ class SensorSetView(APIView):
                         node_id=node.node_id,
                         sensor_id=sensor.sensor_id,
                         sensor_type=sensor.sensor_type,
-                        name=sensor.name)
+                        name=sensor.name,
+                        latest_data=sensor.data_set.latest("created").payload,
+                        last_update=sensor.data_set.latest("created").created)
                     for sensor in sensors]
 
         serializer = SensorSerializer(response, many=True)

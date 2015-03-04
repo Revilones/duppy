@@ -43,6 +43,8 @@ class SensorSerializer(serializers.Serializer):
     sensor_id = serializers.IntegerField()
     sensor_type = serializers.CharField()
     name = serializers.CharField()
+    latest_data = serializers.CharField(read_only=True)
+    last_update = serializers.DateTimeField(read_only=True)
     #interval = serializers.IntegerField()
 
     def create(self, validated_data):
