@@ -19,9 +19,11 @@ urlpatterns = [
             name="api-node-view"),
 
     url(r'controllers/(?P<controller_id>[a-zA-Z0-9]+)/nodes/(?P<node_id>[0-9]+)/sensors/?$',
-            views.SensorSetView.as_view()),
+            views.SensorSetView.as_view(),
+            name="api-sensor-set-view"),
     url(r'controllers/(?P<controller_id>[a-zA-Z0-9]+)/nodes/(?P<node_id>[0-9]+)/sensors/(?P<sensor_id>[0-9]+)/?$',
-            views.SensorView.as_view()),
+            views.SensorView.as_view(),
+            name="api-sensor-view"),
     #url(r'data/(?P<pk>[0-9]+)$', views.DatumDetail.as_view())
 ]
 

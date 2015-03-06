@@ -129,17 +129,17 @@ class DataView(APIView):
         obj = serializer.data
 
         # find the controller
-        controller = models.Controller.objects.get(
+        controller = get_object_or_404(models.Controller,
                 user=request.user,
                 controller_id=obj.get("controller_id"))
 
         # find the node
-        node = models.Node.objects.get(
+        node = get_object_or_404(models.Node,
                 controller=controller,
                 node_id=obj.get("node_id"))
 
         # find the sensor
-        sensor = models.Sensor.objects.get(
+        sensor = get_object_or_404(models.Sensor,
                 node=node,
                 sensor_id=obj.get("sensor_id"))
 
@@ -206,6 +206,43 @@ class NodeSetView(APIView):
 
         serializer = NodeSerializer(response, many=True)
         return Response(serializer.data)
+
+    def post(self, request, controller_id):
+        serializer = NodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        obj = serializer.data
+
+        # find the controller
+        controller = get_object_or_404(models.Controller,
+                user=request.user,
+                controller_id=controller_id)
+
+        # try to find the node
+        node_id = obj.get("node_id")
+        try:
+            node = models.Node.objects.get(
+                    controller=controller,
+                    node_id=node_id)
+            return Response(status=status.HTTP_409_CONFLICT)
+        except models.Node.DoesNotExist:
+            pass
+
+        node_name = obj.get("name")
+        if not node_name:
+            node_name = "New Node #%s" % \
+                (models.Node.objects.filter(controller=controller).count() + 1)
+
+        node = models.Node(
+                controller=controller,
+                node_id=node_id,
+                name=node_name)
+        node.save()
+
+        headers = {"Location": reverse("api-node-view",
+                                       args=[controller.controller_id,
+                                             node.node_id])}
+        return Response(status=status.HTTP_201_CREATED, headers=headers)
 
 
 class SensorView(APIView):
@@ -285,3 +322,51 @@ class SensorSetView(APIView):
 
         serializer = SensorSerializer(response, many=True)
         return Response(serializer.data)
+
+    def post(self, request, controller_id, node_id):
+        serializer = SensorSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        obj = serializer.data
+
+        # find the controller
+        controller = get_object_or_404(models.Controller,
+                user=request.user,
+                controller_id=controller_id)
+
+        # find the node
+        node = get_object_or_404(models.Node,
+                controller=controller,
+                node_id=node_id)
+
+        # try to find the sensor
+        sensor_id = obj.get("sensor_id")
+        try:
+            sensor = models.Sensor.objects.get(
+                    node=node,
+                    sensor_id=sensor_id)
+            return Response(status=status.HTTP_409_CONFLICT)
+        except models.Sensor.DoesNotExist:
+            pass
+
+        sensor_name = obj.get("sensor_name")
+        sensor_type = obj.get("sensor_type")
+        if not sensor_name:
+            sensor_name = "New %s sensor #%s" % \
+                (sensor_type,
+                 (models.Sensor.objects.filter(
+                        node=node,
+                        sensor_type=sensor_type).count() + 1))
+
+        sensor = models.Sensor(
+            node=node,
+            sensor_id=sensor_id,
+            sensor_type=sensor_type,
+            name=sensor_name)
+        sensor.save()
+
+        headers = {"Location": reverse("api-sensor-view",
+                                       args=[controller.controller_id,
+                                             node.node_id,
+                                             sensor.sensor_id])}
+        return Response(status=status.HTTP_201_CREATED, headers=headers)
