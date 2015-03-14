@@ -1,0 +1,72 @@
+[
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "date_joined": "2015-03-09T01:54:28.878Z",
+            "email": "han.solo@example.com",
+            "password": "pbkdf2_sha256$15000$NAIp9UpQZ6w6$0mnYxkrckUlD3nEyB+w/1xOisluF//pdspWJtTUCdwo=",
+            "user_permissions": [],
+            "username": "han",
+            "first_name": "Han",
+            "last_name": "Solo",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "groups": []
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.user",
+        "fields": {
+            "date_joined": "2015-03-12T03:08:35.924Z",
+            "email": "luke.skywalker@example.com",
+            "password": "pbkdf2_sha256$15000$xkS4TE6SUIaE$r8zQ7n5zMn5ZSeLLsq7y5Bj6o806c+KTIgUdTlRJWIs=",
+            "user_permissions": [],
+            "username": "luke",
+            "first_name": "Luke",
+            "last_name": "Skywalker",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "groups": []
+        }
+    },
+    {
+        "pk": "7c5ae543f7e00afa8835c517bc58291d895c3fba",
+        "model": "authtoken.token",
+        "fields": {
+            "created": "2015-03-09T01:54:42.250Z",
+            "user": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "base.controller",
+        "fields": {
+            "controller_id": "40db918b5dd8ffa721cc42f5c7f48bdfa47d8d36",
+            "name": "Test Data Controller",
+            "user": 1,
+            "location": "Seattle, WA"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "base.node",
+        "fields": {
+            "name": "Test Data Node #1",
+            "node_id": 1,
+            "controller": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "base.node",
+        "fields": {
+            "name": "Test Data Node #2",
+            "node_id": 2,
+            "controller": 1
+        }
+    }
+]

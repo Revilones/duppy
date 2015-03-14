@@ -66,7 +66,7 @@ class Sensor(models.Model):
     sensor_type = models.CharField(max_length=250)
 
     def __str__(self):
-        return "%s - [%s] %s" % (self.node, self.sensor_id, self.name)
+        return "[%s.%s] %s" % (self.node.node_id, self.sensor_id, self.name)
 
     class Meta:
         unique_together = (("node", "sensor_id"))

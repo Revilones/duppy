@@ -6,7 +6,8 @@ urlpatterns = [
     url(r'data/?$', views.DataView.as_view()),
 
     url(r'controllers/?$',
-            views.ControllerSetView.as_view()),
+            views.ControllerSetView.as_view(),
+            name="api-controller-set-view"),
     url(r'controllers/(?P<controller_id>[a-zA-Z0-9]+)/?$',
             views.ControllerView.as_view(),
             name="api-controller-view"),

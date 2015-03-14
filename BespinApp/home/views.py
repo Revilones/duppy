@@ -8,19 +8,20 @@ from django.views.generic import View
 
 from .models import Room
 
-@login_required(login_url="/login")
 def index(request, *args, **kwargs):
-    rooms = Room.objects.filter(user=request.user)
+    rooms = Room.objects.filter(enabled=True).order_by("pk")
+    if request.user.is_authenticated():
+        rooms = rooms.filter(user=request.user)
 
-    context = {"rooms": rooms}
-    return render(request, "dashboard/index.html", context)
+    context = {"rooms": rooms, "user": request.user}
+    return render(request, "home/index.html", context)
 
 class LoginView(View):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-            return redirect(reverse("dashboard:index"))
-        return render(request, "dashboard/login.html")
+            return redirect(reverse("home:index"))
+        return render(request, "home/login.html")
 
     def post(self, request, *args, **kwargs):
         invalid = inactive = False
@@ -36,11 +37,11 @@ class LoginView(View):
         else:
             invalid = True
         context = {"error": inactive or invalid}
-        return render(request, "dashboard/login.html", context)
+        return render(request, "home/login.html", context)
 
 
 class LogoutView(View):
 
     def get(self, request, *args, **kwargs):
         logout(request)
-        return redirect(reverse("dashboard:index"))
+        return redirect(reverse("home:index"))

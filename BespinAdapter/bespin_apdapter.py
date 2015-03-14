@@ -18,8 +18,8 @@ CONFIG_METRIC = False
 
 API_HOST = "127.0.0.1"
 API_PORT = 8000
-API_TOKEN = "1afb098c68f2d7466c178b60b78c6b6443a88d36"
-API_CONTROLLERID = "430868768a457feedd2e625c827cfa486570de86"
+API_TOKEN = "7c5ae543f7e00afa8835c517bc58291d895c3fba"
+API_CONTROLLERID = "40db918b5dd8ffa721cc42f5c7f48bdfa47d8d36"
 
 
 ###############################################################################
