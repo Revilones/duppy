@@ -106,7 +106,6 @@ enum usb_t
 	USB_ON
 };
 
-#if 0
 class LowPowerClass
 {
 	public:
