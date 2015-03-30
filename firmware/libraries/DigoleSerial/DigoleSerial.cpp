@@ -33,67 +33,89 @@
 
 //UART function
 
-void DigoleSerialDisp::preprint(void) {
-    //write((uint8_t)0);
-    Print::print("TT");
+const uint8_t STCR_END[] = {0x80,0xC0,0x94,0xD4};
+
+size_t DigoleSerialDisp::sendData(const char *buffer)
+{
+  size_t n = 0;
+  size_t size = strlen(buffer);
+  while (size--) {
+    n += digole_write((uint8_t)*buffer++);
+  }
+  return n;
 }
 
+size_t DigoleSerialDisp::sendData(const uint8_t *buffer, size_t size)
+{
+  size_t n = 0;
+  while (size--) {
+    n += digole_write((uint8_t)*buffer++);
+  }
+  return n;
+}
+
+void DigoleSerialDisp::setLCDColRow(uint8_t col, uint8_t row) {
+    sendData("STCR");
+    digole_write(col);
+    digole_write(row);
+    sendData(STCR_END, 4);
+}
 /*----------Functions for Graphic LCD/OLED adapters only---------*/
 void DigoleSerialDisp::drawBitmap(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint8_t *bitmap) {
     uint8_t i = 0;
     if ((w & 7) != 0)
         i = 1;
-    Print::print("DIM");
-    write(x); //x;
-    write(y);
-    write(w);
-    write(h);
+    sendData("DIM");
+    digole_write(x); //x;
+    digole_write(y);
+    digole_write(w);
+    digole_write(h);
     for (int j = 0; j < h * ((w >> 3) + i); j++) {
-        write(pgm_read_byte_near(bitmap + j));
+        digole_write(pgm_read_byte_near(bitmap + j));
 //        delay(5);
     }
 }
 
 void DigoleSerialDisp::setRot90(void) {
-    Print::print("SD1");
+    sendData("SD1");
 }
 
 void DigoleSerialDisp::setRot180(void) {
-    Print::print("SD2");
+    sendData("SD2");
 }
 
 void DigoleSerialDisp::setRot270(void) {
-    Print::print("SD3");
+    sendData("SD3");
 }
 
 void DigoleSerialDisp::undoRotation(void) {
-    Print::print("SD0");
+    sendData("SD0");
 }
 
 void DigoleSerialDisp::setRotation(uint8_t d) {
-    Print::print("SD");
-    write(d);
+    sendData("SD");
+    digole_write(d);
 }
 
 void DigoleSerialDisp::setContrast(uint8_t c) {
-    Print::print("CT");
-    write(c);
+    sendData("CT");
+    digole_write(c);
 }
 
 void DigoleSerialDisp::drawBox(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
-    Print::print("FR");
-    write(x);
-    write(y);
-    write(x + w);
-    write(y + h);
+    sendData("FR");
+    digole_write(x);
+    digole_write(y);
+    digole_write(x + w);
+    digole_write(y + h);
 }
 
 void DigoleSerialDisp::drawCircle(uint8_t x, uint8_t y, uint8_t r, uint8_t f) {
-    Print::print("CC");
-    write(x);
-    write(y);
-    write(r);
-    write(f);
+    sendData("CC");
+    digole_write(x);
+    digole_write(y);
+    digole_write(r);
+    digole_write(f);
 }
 
 void DigoleSerialDisp::drawDisc(uint8_t x, uint8_t y, uint8_t r) {
@@ -101,32 +123,32 @@ void DigoleSerialDisp::drawDisc(uint8_t x, uint8_t y, uint8_t r) {
 }
 
 void DigoleSerialDisp::drawFrame(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
-    Print::print("DR");
-    write(x);
-    write(y);
-    write(x + w);
-    write(y + h);
+    sendData("DR");
+    digole_write(x);
+    digole_write(y);
+    digole_write(x + w);
+    digole_write(y + h);
 }
 
-void DigoleSerialDisp::drawPixel(uint8_t x, uint8_t y, uint8_t color) {
-    Print::print("DP");
-    write(x);
-    write(y);
-    write(color);
+void DigoleSerialDisp::drawPixel(int16_t x, int16_t y, uint16_t color) {
+    setColor(color);
+    sendData("DP");
+    digole_write((uint8_t)x);
+    digole_write((uint8_t)y);
 }
 
 void DigoleSerialDisp::drawLine(uint8_t x, uint8_t y, uint8_t x1, uint8_t y1) {
-    Print::print("LN");
-    write(x);
-    write(y);
-    write(x1);
-    write(y1);
+    sendData("LN");
+    digole_write(x);
+    digole_write(y);
+    digole_write(x1);
+    digole_write(y1);
 }
 
 void DigoleSerialDisp::drawLineTo(uint8_t x, uint8_t y) {
-    Print::print("LT");
-    write(x);
-    write(y);
+    sendData("LT");
+    digole_write(x);
+    digole_write(y);
 }
 
 void DigoleSerialDisp::drawHLine(uint8_t x, uint8_t y, uint8_t w) {
@@ -138,110 +160,110 @@ void DigoleSerialDisp::drawVLine(uint8_t x, uint8_t y, uint8_t h) {
 }
 
 void DigoleSerialDisp::nextTextLine(void) {
-    write((uint8_t) 0);
-    Print::print("TRT");
+    digole_write((uint8_t) 0);
+    sendData("TRT");
 }
 
 void DigoleSerialDisp::setFont(uint8_t font) {
-    Print::print("SF");
-    write(font);
+    sendData("SF");
+    digole_write(font);
 }
 
 void DigoleSerialDisp::setColor(uint8_t color) {
-    Print::print("SC");
-    write(color);
+    sendData("SC");
+    digole_write(color);
 }
 
 void DigoleSerialDisp::backLightOn(void) {
-    Print::print("BL");
-    write((uint8_t) 1);
+    sendData("BL");
+    digole_write((uint8_t) 1);
 }
 
 void DigoleSerialDisp::backLightOff(void) {
-    Print::print("BL");
-    write((uint8_t) 0);
+    sendData("BL");
+    digole_write((uint8_t) 0);
 }
 
 void DigoleSerialDisp::directCommand(uint8_t d) {
-    Print::print("MCD");
-    write(d);
+    sendData("MCD");
+    digole_write(d);
 }
 
 void DigoleSerialDisp::directData(uint8_t d) {
-    Print::print("MDT");
-    write(d);
+    sendData("MDT");
+    digole_write(d);
 }
 
 void DigoleSerialDisp::moveArea(uint8_t x0, uint8_t y0, uint8_t w, uint8_t h, char xoffset, char yoffset) {
-    Print::print("MA");
-    write(x0);
-    write(y0);
-    write(w);
-    write(h);
-    write(xoffset);
-    write(yoffset);
+    sendData("MA");
+    digole_write(x0);
+    digole_write(y0);
+    digole_write(w);
+    digole_write(h);
+    digole_write(xoffset);
+    digole_write(yoffset);
 }
 
 void DigoleSerialDisp::uploadStartScreen(int lon, const unsigned char *data) {
      int j;
      uint8_t c;
-    Print::print("SSS");
-    write((uint8_t) (lon % 256));
-    write((uint8_t) (lon / 256));
+    sendData("SSS");
+    digole_write((uint8_t) (lon % 256));
+    digole_write((uint8_t) (lon / 256));
     delay(300);
     for (j = 0; j < lon;j++) {
         if((j%32)==0)
          delay(50);
          delay(_Comdelay);
         c=pgm_read_byte_near(data+j);
-        write(c);
+        digole_write(c);
     }
 }
 
 void DigoleSerialDisp::uploadUserFont(int lon, const unsigned char *data, uint8_t sect) {
      uint8_t c;
-    Print::print("SUF");
-    write(sect);
-    write((uint8_t) (lon % 256));
-    write((uint8_t) (lon / 256));
+    sendData("SUF");
+    digole_write(sect);
+    digole_write((uint8_t) (lon % 256));
+    digole_write((uint8_t) (lon / 256));
     for (int j = 0; j < lon; j++) {
         if((j%32)==0)
          delay(50);
          delay(_Comdelay);
         c=pgm_read_byte_near(data+j);
-        write(c);
+        digole_write(c);
     }
 }
 void DigoleSerialDisp::drawBitmap256(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint8_t *bitmap) {	//display 256 color image
     uint8_t i = 0;
-    Print::print("EDIM1");
-    write(x); //x;
-    write(y);
-    write(w);
-    write(h);
+    sendData("EDIM1");
+    digole_write(x); //x;
+    digole_write(y);
+    digole_write(w);
+    digole_write(h);
     for (int j = 0; j < h * w; j++) {
-        write(pgm_read_byte_near(bitmap + j));
+        digole_write(pgm_read_byte_near(bitmap + j));
 //        delay(5);
     }
 }
 void DigoleSerialDisp::drawBitmap262K(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint8_t *bitmap) {	//display 256 color image
     uint8_t i = 0;
-    Print::print("EDIM3");
-    write(x); //x;
-    write(y);
-    write(w);
-    write(h);
+    sendData("EDIM3");
+    digole_write(x); //x;
+    digole_write(y);
+    digole_write(w);
+    digole_write(h);
     for (int j = 0; (j < h * w *3); j++) {
-        write(pgm_read_byte_near(bitmap + j));
+        digole_write(pgm_read_byte_near(bitmap + j));
 //        delay(5);
     }
 }
 void DigoleSerialDisp::setTrueColor(uint8_t r, uint8_t g, uint8_t b) {	//Set true color
     uint8_t i = 0;
-    Print::print("ESC");
-    write(r); 
-    write(g);
-    write(b);
+    sendData("ESC");
+    digole_write(r); 
+    digole_write(g);
+    digole_write(b);
 }
 
 

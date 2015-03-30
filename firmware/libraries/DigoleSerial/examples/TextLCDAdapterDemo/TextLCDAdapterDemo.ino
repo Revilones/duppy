@@ -5,7 +5,7 @@ The size for 2 version(@Arduino 1.0.1):
 OLD   8998  8988   9132
 NEW   6966  7566   6354
 ------------------------*/
-#define _Digole_Serial_UART_  //To tell compiler compile the special communication only, 
+#define _Digole_Serial_I2C_  //To tell compiler compile the special communication only, 
 //all available are:_Digole_Serial_UART_, _Digole_Serial_I2C_ and _Digole_Serial_SPI_
 #include <DigoleSerial.h>
 //--------UART setup

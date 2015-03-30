@@ -2,8 +2,9 @@
  *This demo code will show you all functions for
  *Digole Graphic LCD adapter
  */
-#define _Digole_Serial_UART_  //To tell compiler compile the special communication only, 
+#define _Digole_Serial_I2C_  //To tell compiler compile the special communication only, 
 //all available are:_Digole_Serial_UART_, _Digole_Serial_I2C_ and _Digole_Serial_SPI_
+#include <Adafruit_GFX.h>
 #include <DigoleSerial.h>
 //--------UART setup
 #if defined(_Digole_Serial_UART_)
@@ -51,6 +52,7 @@ float pi = 3.1415926535;
 double lg10;
 const unsigned char fonts[] = {6, 10, 18, 51, 120, 123};
 const char *fontdir[] = {"0\xb0", "90\xb0", "180\xb0", "270\xb0"};
+
 void resetpos1(void) //for demo use, reset display position and clean the demo line
 {
     mydisp.setPrintPos(0, 0, _TEXT_);
@@ -69,9 +71,9 @@ void resetpos(void) //for demo use, reset display position and clean the demo li
 void setup() {
     mydisp.begin();
     /*----------for text LCD adapter and graphic LCD adapter ------------*/
+    mydisp.displayConfig(1);    //set config display ON, 0=off
+    mydisp.setI2CAddress(0x29);  //this function only working when you connect using I2C, from 1 to 127
     mydisp.clearScreen(); //CLear screen
-    //mydisp.displayConfig(1);    //set config display ON, 0=off
-    //mydisp.setI2CAddress(0x29);  //this function only working when you connect using I2C, from 1 to 127
     //delay(1000);
     //mydisp.setLCDColRow(16,2);  //set LCD Col and Row, only time set up is OK
     mydisp.disableCursor(); //disable cursor, enable cursore use: enableCursor();
@@ -183,7 +185,7 @@ void setup() {
     mydisp.clearScreen();
     mydisp.drawStr(0, 0, "draw Pixels");
     for (uint8_t i = 0; i < 20; i++) {
-        mydisp.drawPixel(20 + i * 2, 12 + random(50));
+        mydisp.drawPixel(20 + i * 2, 12 + random(50), 125);
     }
     //test drawing Lines
     resetpos1();
@@ -305,6 +307,8 @@ void setup() {
     {
         mydisp.drawLineTo(i, (uint8_t) (32 - (float) (sin(i * 3.14 / 63)*28)));
     }
+    mydisp.clearScreen();
+
 }
 void loop() {
 }
