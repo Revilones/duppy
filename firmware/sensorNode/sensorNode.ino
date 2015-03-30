@@ -1,6 +1,20 @@
+#define _Digole_Serial_I2C_
+
 #include <MySensor.h>
 #include <SPI.h>
-#include <DHT.h>  
+#include <DHT.h>
+#include <Adafruit_GFX.h>
+#include <DigoleSerial.h>
+#include <Wire.h>
+
+#define DEBUG_PRINT(serial, msg) \
+            Serial.print(msg);
+
+#define DEBUG_PRINTLN(serial, msg) \
+            Serial.println(msg);   \
+            
+#define DEBUG_PRINTLN(serial, msg) \
+            Serial.println(msg);   \
 
 #define SUCCESS 0
 #define ERROR_INTERNAL -1
@@ -14,6 +28,7 @@
 #define HUMIDITY_SENSOR_DIGITAL_PIN 3
 unsigned long SLEEP_TIME = 30000; // Sleep time between reads (in milliseconds)
  
+DigoleSerialDisp mydisp(&Wire,'\x27');
 MySensor gw;
 DHT dht;
 float lastTemp;
@@ -22,12 +37,15 @@ boolean metric = true;
 MyMessage msgHum(CHILD_ID_HUM, V_HUM);
 MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
 
-int led = 4;
+void writeTemperatureSrv(MySensor gw, float temperature)
+{
+    gw.send(msgTemp.set(temperature, 1));
+}
 
 int readTemperature(float *Temperature)
 {
     int error = 0;
-    float temperature 0;
+    float temperature = 0;
     
     temperature = dht.getTemperature();
     
@@ -41,7 +59,10 @@ int readTemperature(float *Temperature)
 #endif
     }
     
-    *temperature = temperature
+    DEBUG_PRINT(Serial,"T: ");
+    DEBUG_PRINTLN(Serial,temperature);
+    
+    *Temperature = temperature;
 
 cleanup:
     
@@ -52,13 +73,46 @@ error:
     goto cleanup;
 }
 
-float readTemperature()
+void wrightHumidity(MySensor gw, float humidity)
 {
+    gw.send(msgHum.set(humidity, 1));
+}
+
+float readHumidity(float *Humidity)
+{
+    int error = 0;
+    float humidity = 0;
+    
+    humidity = dht.getHumidity();
+    if (isnan(humidity)) {
+      Serial.println("Failed reading humidity from DHT");
+      error = ERROR_INTERNAL;
+      goto error;
+    } else {
+      DEBUG_PRINT(Serial,"H: ");
+      DEBUG_PRINTLN(Serial,humidity);
+    }
+    
+    *Humidity = humidity;
+    
+    cleanup:
+    
+    return error;
+    
+error:
+
+    goto cleanup;
 }
  
 void setup() 
 { 
-    pinMode(led, OUTPUT);     
+    //Setup Display
+    mydisp.begin();
+    mydisp.displayConfig(1);
+    mydisp.setI2CAddress(0x29);
+    mydisp.clearScreen();
+    mydisp.setBackLight(70);
+       
     gw.begin();
 
     dht.setup(HUMIDITY_SENSOR_DIGITAL_PIN); 
@@ -71,33 +125,40 @@ void setup()
     gw.present(CHILD_ID_TEMP, S_TEMP);
 
     metric = gw.getConfig().isMetric;
+    
+    mydisp.clearScreen();
+    mydisp.setTextSize(4);
+    mydisp.setTextColor(150, 0x0);
+    mydisp.setCursor(10, 20);
+    mydisp.println("Hum: ");
+    mydisp.setCursor(10, 70);
+    mydisp.println("Tmp: ");
 }
  
 void loop()
 {
     int error = 0;
     float temperature = 0;
+    float humidity = 0;
     delay(dht.getMinimumSamplingPeriod());
 
-    error = getTemperature(&temperature);
+    error = readTemperature(&temperature);
     if (error == SUCCESS) {
-        gw.send(msgTemp.set(temperature, 1));
-        Serial.print("T: ");
-        Serial.println(temperature);
+        //gw.send(msgTemp.set(temperature, 1));
     }
     
-    float humidity = dht.getHumidity();
-    if (isnan(humidity)) {
-      Serial.println("Failed reading humidity from DHT");
-    } else if (humidity != lastHum) {
-      lastHum = humidity;
-      gw.send(msgHum.set(humidity, 1));
-      Serial.print("H: ");
-      Serial.println(humidity);
+    error = readHumidity(&humidity);
+    if (error == SUCCESS) {
+      //gw.send(msgHum.set(humidity, 1));
     }
-  
-  digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(5000);               // wait for a second
-  digitalWrite(led, LOW);    // turn the LED off by making the voltage LOW
-  delay(5000);               // wait for a second
+    
+    //mydisp.drawBox(80, 20, 60, 20, 60);
+    //mydisp.drawBox(80, 60, 60, 20, 60);
+    
+    mydisp.setTextColor(75, 0);
+    mydisp.setCursor(105, 20);
+    mydisp.println((int)humidity);
+    mydisp.setCursor(105, 70);
+    mydisp.println((int)temperature);
+    delay(5000);
 }
