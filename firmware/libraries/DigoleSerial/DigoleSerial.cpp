@@ -110,6 +110,15 @@ void DigoleSerialDisp::drawBox(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
     digole_write(y + h);
 }
 
+void DigoleSerialDisp::drawBox(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color) {
+    setColor(color);
+    sendData("FR");
+    digole_write(x);
+    digole_write(y);
+    digole_write(x + w);
+    digole_write(y + h);
+}
+
 void DigoleSerialDisp::drawCircle(uint8_t x, uint8_t y, uint8_t r, uint8_t f) {
     sendData("CC");
     digole_write(x);

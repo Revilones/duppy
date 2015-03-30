@@ -17,6 +17,9 @@
 #define _TEXT_ 0
 #define _GRAPH_ 1
 
+#define DIGOLE_WIDTH 160
+#define DIGOLE_HEIGHT 128
+
 class DigoleSerialDisp : public Adafruit_GFX {
 public:
 #if defined(_Digole_Serial_UART_)
@@ -152,6 +155,7 @@ void begin(void) {
     void setRotation(uint8_t);
     void setContrast(uint8_t);
     void drawBox(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
+    void drawBox(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
     void drawCircle(uint8_t x, uint8_t y, uint8_t r, uint8_t = 0);
     void drawDisc(uint8_t x, uint8_t y, uint8_t r);
     void drawFrame(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
