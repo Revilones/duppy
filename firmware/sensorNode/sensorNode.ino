@@ -1,5 +1,6 @@
 #define _Digole_Serial_I2C_
 
+#include <PinChangeInt.h>
 #include <kSeries.h>
 #include <MySensor.h>
 #include <SPI.h>
@@ -58,7 +59,7 @@ int readTemperature(float *Temperature)
     temperature = dht.getTemperature();
     
     if (isnan(temperature)) {
-        Serial.println("Failed reading temperature from DHT");
+        //Serial.println("Failed reading temperature from DHT");
         error = ERROR_INTERNAL;
         goto error;
     } else {
@@ -67,8 +68,8 @@ int readTemperature(float *Temperature)
 #endif
     }
     
-    DEBUG_PRINT(Serial,"T: ");
-    DEBUG_PRINTLN(Serial,temperature);
+    //DEBUG_PRINT(Serial,"T: ");
+    //DEBUG_PRINTLN(Serial,temperature);
     
     *Temperature = temperature;
 
@@ -93,12 +94,12 @@ int readHumidity(float *Humidity)
     
     humidity = dht.getHumidity();
     if (isnan(humidity)) {
-      Serial.println("Failed reading humidity from DHT");
+      //Serial.println("Failed reading humidity from DHT");
       error = ERROR_INTERNAL;
       goto error;
     } else {
-      DEBUG_PRINT(Serial,"H: ");
-      DEBUG_PRINTLN(Serial,humidity);
+      //DEBUG_PRINT(Serial,"H: ");
+      //DEBUG_PRINTLN(Serial,humidity);
     }
     
     *Humidity = humidity;
@@ -138,6 +139,8 @@ error:
 
 void setup() 
 { 
+    //Delay for Second to allow DHT to initialize
+    delay(1000);
 
     //Initialize Buttons
     pinMode(BUTTON_UP, INPUT); 
@@ -158,7 +161,7 @@ void setup()
     dht.setup(HUMIDITY_SENSOR_DIGITAL_PIN); 
 
     //Initialize Gateway 
-    gw.begin();
+    gw.begin(NULL, 5, false, AUTO, RF24_PA_LEVEL, RF24_CHANNEL, RF24_DATARATE);
     
     // Send the Sketch Version Information to the Gateway
     gw.sendSketchInfo("Humidity", "1.0");
@@ -191,18 +194,18 @@ void loop()
     
     error = readTemperature(&temperature);
     if (error == SUCCESS) {
-        //gw.send(msgTemp.set(temperature, 1));
+        gw.send(msgTemp.set(temperature, 1));
     }
     
     error = readHumidity(&humidity);
     if (error == SUCCESS) {
-      //gw.send(msgHum.set(humidity, 1));
+        gw.send(msgHum.set(humidity, 1));
     }
     
     // Get CO2 value from sensor
     error = readCo2(&co2);
     if (error == SUCCESS) {
-        //gw.send(msgCo2.set(co2, 1));
+        gw.send(msgCo2.set(co2, 1));
     }
     
     //mydisp.drawBox(80, 10, 60, 20, 0);

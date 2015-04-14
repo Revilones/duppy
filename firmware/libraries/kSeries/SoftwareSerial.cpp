@@ -45,6 +45,11 @@ http://arduiniana.org.
 //
 // Lookup table
 //
+#ifndef PinChangeInt_h
+#define LIBCALL_PINCHANGEINT
+#include "../PinChangeInt/PinChangeInt.h"
+#endif
+
 typedef struct _DELAY_TABLE
 {
   long baud;
@@ -298,6 +303,7 @@ inline void SoftwareSerial::handle_interrupt()
   }
 }
 
+#if 0
 #if defined(PCINT0_vect)
 ISR(PCINT0_vect)
 {
@@ -324,6 +330,7 @@ ISR(PCINT3_vect)
 {
   SoftwareSerial::handle_interrupt();
 }
+#endif
 #endif
 
 //
@@ -393,11 +400,14 @@ void SoftwareSerial::begin(long speed)
   // Set up RX interrupts, but only if we have a valid RX baud rate
   if (_rx_delay_stopbit)
   {
+#if 0
     if (digitalPinToPCICR(_receivePin))
     {
       *digitalPinToPCICR(_receivePin) |= _BV(digitalPinToPCICRbit(_receivePin));
       *digitalPinToPCMSK(_receivePin) |= _BV(digitalPinToPCMSKbit(_receivePin));
     }
+#endif
+    PCintPort::attachInterrupt(_receivePin, SoftwareSerial::handle_interrupt, FALLING);
     tunedDelay(_tx_delay); // if we were low this establishes the end
   }
 

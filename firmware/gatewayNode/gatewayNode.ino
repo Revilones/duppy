@@ -21,6 +21,7 @@
  * - ERR (red) - fast blink on error during transmission error or recieve crc error  
  */
 
+#include <PinChangeInt.h>
 #include <SPI.h>  
 #include <MySensor.h>  
 #include <MyGateway.h>  

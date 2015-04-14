@@ -11,7 +11,12 @@
 
 #include "MyGateway.h"
 #include "utility/MsTimer2.h"
-#include "utility/PinChangeInt.h"
+
+#ifndef PinChangeInt_h
+#define LIBCALL_PINCHANGEINT
+#include "../PinChangeInt/PinChangeInt.h"
+#endif
+//#include "utility/PinChangeInt.h"
 
 
 uint8_t pinRx;

@@ -91,7 +91,7 @@ Version 2.11 (beta) Mon Nov 12 09:33:06 CST 2012
 	*/
 
 #ifndef PinChangeInt_h
-#define	PinChangeInt_h
+#define PinChangeInt_h
 
 #define PCINT_VERSION 2190 // This number MUST agree with the version number, above.
 

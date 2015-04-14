@@ -1,7 +1,7 @@
 #include "kSeries.h"
  
 // Create K30 instance on pin 6 & 7
-kSeries K_30(6,7);
+kSeries K_30(3,4);
  
 void setup()
 {
