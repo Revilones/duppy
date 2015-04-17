@@ -164,7 +164,7 @@ void setup()
     gw.begin(NULL, 5, false, AUTO, RF24_PA_LEVEL, RF24_CHANNEL, RF24_DATARATE);
     
     // Send the Sketch Version Information to the Gateway
-    gw.sendSketchInfo("Humidity", "1.0");
+    gw.sendSketchInfo("Bespin", "1.0");
 
     // Register all sensors to gw (they will be created as child devices)
     gw.present(CHILD_ID_HUM, S_HUM);
@@ -221,7 +221,7 @@ void loop()
     mydisp.println((int)co2);
     
     digitalWrite(STATUS_LED, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(1000);               // wait for a second
+    delay(5000);               // wait for a second
     digitalWrite(STATUS_LED, LOW);    // turn the LED off by making the voltage LOW
-    delay(1000);               // wait for a second
+    delay(5000);               // wait for a second
 }

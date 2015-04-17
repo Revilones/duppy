@@ -16,10 +16,10 @@ LOG_LEVEL = logging.INFO
 
 CONFIG_METRIC = False
 
-API_HOST = "127.0.0.1"
+API_HOST = "192.168.0.106"
 API_PORT = 8000
-API_TOKEN = "7c5ae543f7e00afa8835c517bc58291d895c3fba"
-API_CONTROLLERID = "40db918b5dd8ffa721cc42f5c7f48bdfa47d8d36"
+API_TOKEN = "d243c21f4e135a1579b33e4770f7902edceebb3c"
+API_CONTROLLERID = "c644d0f53cf54516aa654d33f3aac3c2e6f389e6"
 
 
 ###############################################################################
@@ -71,7 +71,8 @@ V_RAIN              = 6
 V_RAINRATE          = 7
 V_WIND              = 8
 V_GUST              = 9
-V_DIRECTION         = 104
+V_DIRECTION         = 10
+V_GAS               = 24
 
 # Presentation sub-types
 S_DOOR              = 0
@@ -319,6 +320,20 @@ def command_present_hum(nodeid, sensorid, payload):
             LOG.error("[API] Failed to create sensor '%s' on node '%s'",
                     sensorid, nodeid)
 
+def command_present_co2(nodeid, sensorid, payload):
+    """
+    A node is broadcasting it has a co2 sensor configured.
+    """
+    LOG.info("Node '%s' has co2 sensor with id: %s", nodeid, sensorid)
+    sensor = api_get_sensor(API_CONTROLLERID, nodeid, sensorid)
+    if sensor is None:
+        if api_create_sensor(API_CONTROLLERID, nodeid, sensorid, "co2"):
+            LOG.info("[API] Created sensor '%s' on node '%s'",
+                    sensorid, nodeid)
+        else:
+            LOG.error("[API] Failed to create sensor '%s' on node '%s'",
+                    sensorid, nodeid)
+
 ###############################################################################
 # Req/Set Command Handlers
 ###############################################################################
@@ -329,6 +344,10 @@ def command_set_temp(nodeid, sensorid, payload):
 
 def command_set_hum(nodeid, sensorid, payload):
     LOG.debug("Node %s, Sesnor: %s, Humidity: %s%%", nodeid, sensorid, payload)
+    upload_data(nodeid, sensorid, C_SET, V_HUM, payload)
+
+def command_set_co2(nodeid, sensorid, payload):
+    LOG.debug("Node %s, Sesnor: %s, Co2: %s%%", nodeid, sensorid, payload)
     upload_data(nodeid, sensorid, C_SET, V_HUM, payload)
 
 ###############################################################################
@@ -368,9 +387,11 @@ def register_action(msgtype, subtype, func):
 register_action(C_PRESENTATION, S_ARDUINO_NODE, command_present_node)
 register_action(C_PRESENTATION, S_TEMP, command_present_temp)
 register_action(C_PRESENTATION, S_HUM, command_present_hum)
+register_action(C_PRESENTATION, S_AIR_QUALITY, command_present_co2)
 
 register_action(C_SET, V_TEMP, command_set_temp)
 register_action(C_SET, V_HUM, command_set_hum)
+register_action(C_SET, V_GAS, command_set_co2)
 
 register_action(C_INTERNAL, I_TIME, command_internal_time)
 register_action(C_INTERNAL, I_CONFIG, command_internal_config)
