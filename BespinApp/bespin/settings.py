@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    #'grappelli',
+    #'suit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +43,7 @@ INSTALLED_APPS = (
     'rest_framework_swagger',
     'base',
     'api',
+    'webcam',
     'home',
 )
 
@@ -94,7 +97,8 @@ STATICFILES_DIRS = (
 )
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -103,4 +107,12 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 10,                 # Default to 10
     'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
     'MAX_PAGINATE_BY': 100             # Maximum limit allowed when using `?page_size=xxx`.
+}
+
+SUIT_CONFIG = {
+    'MENU': (
+        'base',
+        #{'app': 'auth', 'label': 'Auth', 'icon': 'icon-lock'},
+        #{'app': 'auth', 'models': ('user', 'group')},
+    )
 }

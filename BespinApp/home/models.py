@@ -1,7 +1,7 @@
-from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.db import models
-from base.models import Sensor as BaseSensor
+
+from base.models import Sensor as BaseSensor, User
 
 class Sensor(BaseSensor):
 

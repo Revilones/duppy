@@ -1,8 +1,12 @@
 import binascii
 import os
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User as BaseUser
 from django.db import models
+
+class User(BaseUser):
+    class Meta:
+        proxy = True
 
 #class Datum(models.Model):
 #    nodeid = models.IntegerField()

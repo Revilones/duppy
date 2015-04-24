@@ -7,8 +7,10 @@ urlpatterns = patterns('',
     # url(r'^$', 'bespin.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
+    #(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
+    url(r'^admin/', include(admin.site.urls)), # admin site
     url(r'^api/', include('api.urls')),
+    url(r'', include('webcam.urls')),
     url(r'docs/', include('rest_framework_swagger.urls')),
     url(r'^api-auth/', include('rest_framework.urls',
             namespace='rest_framework')),
