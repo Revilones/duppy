@@ -3,6 +3,7 @@ import os
 
 from django.contrib.auth.models import User as BaseUser
 from django.db import models
+from django.db.models import Count, Avg
 
 class User(BaseUser):
     class Meta:
@@ -75,11 +76,49 @@ class Sensor(models.Model):
     class Meta:
         unique_together = (("node", "sensor_id"))
 
+
+class DataManager(models.Manager):
+
+    @property
+    def global_average_by_sensor(self):
+        return Data.objects.values("sensor","sensor__name", "sensor__sensor_type") \
+                .annotate(average=Avg('payload'), count=Count('pk'))
+
+    @property
+    def monthly_average_by_sensor(self):
+        return Data.objects.all() \
+                .extra(select={'year': 'strftime("%%Y", created)',
+                    'month': 'strftime("%%m", created)'}) \
+                .values("month", "year", "sensor__sensor_type") \
+                .annotate(count=Count("pk"),
+                        avg=Avg("payload"))
+
+    @property
+    def daily_average_by_sensor(self):
+        return Data.objects.all() \
+                .extra(select={'year': 'strftime("%%Y", created)',
+                    'month': 'strftime("%%m", created)',
+                    'day': 'strftime("%%d", created)'}) \
+                .values("day", "month", "year", "sensor__sensor_type") \
+                .annotate(count=Count("pk"),
+                        avg=Avg("payload"))
+
+
 class Data(models.Model):
+    # fields
     sensor = models.ForeignKey(Sensor)
     payload = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
 
+    # override model manager
+    objects = DataManager()
+
     class Meta:
         get_latest_by = "created"
         verbose_name_plural = "Data"
+
+    def __str__(self):
+        return "type='{0}' payload='{1}'".format(
+                self.sensor.sensor_type,
+                self.payload)
+
