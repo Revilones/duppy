@@ -82,6 +82,3 @@ void serialEvent() {
     }
   }
 }
-
-
-

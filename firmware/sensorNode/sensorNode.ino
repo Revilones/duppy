@@ -18,8 +18,6 @@
 #define DEBUG_PRINTLN(serial, msg) \
             Serial.println(msg);   \
 
-#define METRIC
-            
 #define SUCCESS 0
 #define ERROR_INTERNAL -1
 
@@ -63,9 +61,10 @@ int readTemperature(float *Temperature)
         error = ERROR_INTERNAL;
         goto error;
     } else {
-#ifndef METRIC
-        temperature = dht.toFahrenheit(temperature);
-#endif
+	    if(metric == true)
+	    {
+            temperature = dht.toFahrenheit(temperature);
+	    }
     }
     
     //DEBUG_PRINT(Serial,"T: ");
@@ -161,7 +160,7 @@ void setup()
     dht.setup(HUMIDITY_SENSOR_DIGITAL_PIN); 
 
     //Initialize Gateway 
-    gw.begin(NULL, 5, false, AUTO, RF24_PA_LEVEL, RF24_CHANNEL, RF24_DATARATE);
+    gw.begin(NULL, AUTO, false, AUTO, RF24_PA_LEVEL, RF24_CHANNEL, RF24_DATARATE);
     
     // Send the Sketch Version Information to the Gateway
     gw.sendSketchInfo("Bespin", "1.0");
