@@ -421,6 +421,7 @@ void Adafruit_GFX::write(uint8_t c) {
       cursor_x = 0;
     }
   }
+#ifdef DEBUG
   Serial.print("Text Size:");
   Serial.println(textsize);
   Serial.print("Width:");
@@ -429,6 +430,7 @@ void Adafruit_GFX::write(uint8_t c) {
   Serial.println(_height);
   Serial.print("Text Color:");
   Serial.println(textcolor);
+#endif
   
 #if ARDUINO >= 100
   return 1;
@@ -439,11 +441,13 @@ void Adafruit_GFX::write(uint8_t c) {
 void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,
 			    uint16_t color, uint16_t bg, uint8_t size) {
                 
+#ifdef DEBUG
   Serial.print("x:");
   Serial.print(x);
   Serial.print(" ");
   Serial.print("y:");
   Serial.println(y);
+#endif
   
   if((x >= _width)            || // Clip right
      (y >= _height)           || // Clip bottom

@@ -5,6 +5,7 @@ import json
 import logging
 import serial
 import time
+import os
 
 import daemon
 import mysensors
@@ -134,9 +135,9 @@ def command_present_co2(nodeid, sensorid, payload):
     A node is broadcasting it has a co2 sensor configured.
     """
     LOG.info("Node '%s' has co2 sensor with id: %s", nodeid, sensorid)
-    sensor = api_get_sensor(API_CONTROLLERID, nodeid, sensorid)
+    sensor = api_get_sensor(settings.API_CONTROLLERID, nodeid, sensorid)
     if sensor is None:
-        if api_create_sensor(API_CONTROLLERID, nodeid, sensorid, "co2"):
+        if api_create_sensor(settings.API_CONTROLLERID, nodeid, sensorid, "co2"):
             LOG.info("[API] Created sensor '%s' on node '%s'",
                     sensorid, nodeid)
         else:
@@ -157,7 +158,7 @@ def command_set_hum(nodeid, sensorid, payload):
 
 def command_set_co2(nodeid, sensorid, payload):
     LOG.debug("Node %s, Sesnor: %s, Co2: %s%%", nodeid, sensorid, payload)
-    upload_data(nodeid, sensorid, C_SET, V_HUM, payload)
+    upload_data(nodeid, sensorid, payload)
 
 ###############################################################################
 # Internal Command Handlers
@@ -185,6 +186,21 @@ def command_internal_gateway_ready(nodeid, sensorid, payload):
     Gateway node is reporting ready.
     """
     LOG.info("Gateway ready")
+
+NODEID = 1
+
+def command_id_request(nodeid, sensorid, payload):
+    """
+    Node is requesting id.
+    """
+    global NODEID 
+    data = NODEID
+    NODEID = NODEID + 1
+    file(settings.NODEID_FILE, 'w+').write("%s\n" % NODEID)
+
+    LOG.info("Id Request sending id:%d" % data)
+    return encode_command(nodeid, sensorid, mysensors.C_INTERNAL, 0, \
+            mysensors.I_ID_RESPONSE, data)
 
 HANDLERS = {}
 def register_action(msgtype, subtype, func):
@@ -216,6 +232,8 @@ register_action(mysensors.C_INTERNAL, mysensors.I_CONFIG, \
         command_internal_config)
 register_action(mysensors.C_INTERNAL, mysensors.I_GATEWAY_READY, \
         command_internal_gateway_ready)
+register_action(mysensors.C_INTERNAL, mysensors.I_ID_REQUEST, \
+        command_id_request)
 
 def parse_command(command):
     parts = command.split(";")
@@ -276,6 +294,16 @@ def parse_args():
 class BespinAdapter(daemon.Daemon):
 
     def __init__(self, device=None, run_as_daemon=True, log_file=None):
+        #Init Id File
+        global NODEID
+        try:
+            with file(settings.NODEID_FILE, 'r') as idfile:
+                NODEID = int(idfile.read().strip())
+        except IOError:
+                NODEID = 1
+                file(settings.NODEID_FILE, 'w+').\
+                                write("%s\n" % NODEID)
+
         if not log_file:
             log_file = settings.LOG_FILE
         super(BespinAdapter, self).__init__(settings.PID_FILE, \
