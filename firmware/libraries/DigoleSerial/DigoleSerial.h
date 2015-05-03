@@ -6,7 +6,6 @@
 #include "Print.h"
 #include "../Wire/Wire.h"
 #include "Arduino.h"
-#include <Adafruit_GFX.h>
 
 // Communication set up command
 // Text function command
@@ -17,21 +16,18 @@
 #define _TEXT_ 0
 #define _GRAPH_ 1
 
-#define DIGOLE_WIDTH 160
-#define DIGOLE_HEIGHT 128
-
-class DigoleSerialDisp : public Adafruit_GFX {
+class DigoleSerialDisp : public Print {
 public:
 #if defined(_Digole_Serial_UART_)
 
-DigoleSerialDisp(HardwareSerial *s, unsigned long baud) : Adafruit_GFX(160,128)//UART set up
+DigoleSerialDisp(HardwareSerial *s, unsigned long baud) //UART set up
     {
         _mySerial = s;
         _Baud = baud;
         _Comdelay=2;
     }
 
-    size_t digole_write(uint8_t value) {
+    size_t write(uint8_t value) {
         _mySerial->write(value);
         return 1; // assume sucess
     }
@@ -50,11 +46,18 @@ void begin(void) {
         _myWire->begin();
     }
 
-    DigoleSerialDisp(TwoWire *s, uint8_t add) : Adafruit_GFX(160,128) //U2C set up
+    DigoleSerialDisp(TwoWire *s, uint8_t add) //U2C set up
     {
         _myWire = s;
         _I2Caddress = add;
         _Comdelay=6;
+    }
+
+    size_t write(uint8_t value) {
+        _myWire->beginTransmission(_I2Caddress);
+        _myWire->write(value);
+        _myWire->endTransmission();
+        return 1; // assume sucess
     }
 #endif
 #if defined(_Digole_Serial_SPI_)
@@ -62,7 +65,7 @@ void begin(void) {
 void begin(void) {
     }
 
-    DigoleSerialDisp(uint8_t pin_data, uint8_t pin_clock, uint8_t SS) : Adafruit_GFX(160,128) //spi set up
+    DigoleSerialDisp(uint8_t pin_data, uint8_t pin_clock, uint8_t SS) //spi set up
     {
         _Clockpin = pin_clock;
         _Datapin = pin_data;
@@ -76,7 +79,7 @@ void begin(void) {
         _Comdelay=6;
     }
 
-    size_t digole_write(uint8_t value) {
+    size_t write(uint8_t value) {
         digitalWrite(_SSpin, LOW);
         digitalWrite(_SSpin, LOW);
         digitalWrite(_SSpin, LOW);
@@ -87,63 +90,186 @@ void begin(void) {
 #endif
     //    virtual size_t write(uint8_t);
     //    void begin(void);
-    size_t digole_write(uint8_t value) {
-        _myWire->beginTransmission(_I2Caddress);
-        _myWire->write(value);
-        _myWire->endTransmission();
-        return 1; // assume sucess
-    }
-    
-    size_t sendData(const char *buffer);
-    size_t sendData(const uint8_t *buffer, size_t size);
 
         /*---------fucntions for Text and Graphic LCD adapters---------*/
     void disableCursor(void) {
-        sendData("CS0");
+        Print::print("CS0");
     }
 
     void enableCursor(void) {
-        sendData("CS1");
+        Print::print("CS1");
     }
 
     void drawStr(uint8_t x, uint8_t y, const char *s) {
-        sendData("TP");
-        digole_write(x);
-        digole_write(y);
-        sendData("TT");
+        Print::print("TP");
+        write(x);
+        write(y);
+        Print::print("TT");
         Print::println(s);
     }
 
     void setPrintPos(uint8_t x, uint8_t y, uint8_t graph = _TEXT_) {
         if (graph == _TEXT_) {
-            sendData("TP");
-            digole_write(x);
-            digole_write(y);
+            Print::print("TP");
+            write(x);
+            write(y);
         } else {
-            sendData("GP");
-            digole_write(x);
-            digole_write(y);
+            Print::print("GP");
+            write(x);
+            write(y);
         }
     }
 
     void clearScreen(void) {
-        sendData("CL");
+        Print::print("CL");
+    }
+
+    void setLCDColRow(uint8_t col, uint8_t row) {
+        Print::print("STCR");
+        write(col);
+        write(row);
+        Print::print("\x80\xC0\x94\xD4");
     }
 
     void setI2CAddress(uint8_t add) {
-        sendData("SI2CA");
-        digole_write(add);
+        Print::print("SI2CA");
+        write(add);
         _I2Caddress = add;
     }
 
     void displayConfig(uint8_t v) {
-        sendData("DC");
-        digole_write(v);
+        Print::print("DC");
+        write(v);
+    }
+    //print function
+
+    size_t println(const __FlashStringHelper *v) {
+        preprint();
+        Print::println(v);
+        Print::print("\x0dTRT");
     }
 
+    size_t println(const String &v) {
+        preprint();
+        Print::println(v);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(const char v[]) {
+        preprint();
+        Print::println(v);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(char v) {
+        preprint();
+        Print::println(v);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(unsigned char v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(int v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(unsigned int v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(long v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(unsigned long v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(double v, int base = 2) {
+        preprint();
+        Print::println(v, base);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(const Printable& v) {
+        preprint();
+        Print::println(v);
+        Print::println("\x0dTRT");
+    }
+
+    size_t println(void) {
+        Print::println("\x0dTRT");
+    }
+
+    size_t print(const __FlashStringHelper *v) {
+        preprint();
+        Print::println(v);
+    }
+
+    size_t print(const String &v) {
+        preprint();
+        Print::println(v);
+    }
+
+    size_t print(const char v[]) {
+        preprint();
+        Print::println(v);
+    }
+
+    size_t print(char v) {
+        preprint();
+        Print::println(v);
+    }
+
+    size_t print(unsigned char v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+    }
+
+    size_t print(int v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+    }
+
+    size_t print(unsigned int v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+    }
+
+    size_t print(long v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+    }
+
+    size_t print(unsigned long v, int base = DEC) {
+        preprint();
+        Print::println(v, base);
+    }
+
+    size_t print(double v, int base = 2) {
+        preprint();
+        Print::println(v, base);
+    }
+
+    size_t print(const Printable& v) {
+        preprint();
+        Print::println(v);
+    }
+    void preprint(void);
     /*----------Functions for Graphic LCD/OLED adapters only---------*/
     //the functions in this section compatible with u8glib
-    void setLCDColRow(uint8_t col, uint8_t row);
     void drawBitmap(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint8_t *bitmap);
     void drawBitmap256(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint8_t *bitmap);
     void drawBitmap262K(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint8_t *bitmap);
@@ -155,11 +281,10 @@ void begin(void) {
     void setRotation(uint8_t);
     void setContrast(uint8_t);
     void drawBox(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
-    void drawBox(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
     void drawCircle(uint8_t x, uint8_t y, uint8_t r, uint8_t = 0);
     void drawDisc(uint8_t x, uint8_t y, uint8_t r);
     void drawFrame(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
-    void drawPixel(int16_t x, int16_t y, uint16_t color);
+    void drawPixel(uint8_t x, uint8_t y, uint8_t = 1);
     void drawLine(uint8_t x, uint8_t y, uint8_t x1, uint8_t y1);
     void drawLineTo(uint8_t x, uint8_t y);
     void drawHLine(uint8_t x, uint8_t y, uint8_t w);
@@ -176,45 +301,45 @@ void begin(void) {
     void moveArea(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, char xoffset, char yoffset); //move a area of screen to another place
 
     void displayStartScreen(uint8_t m) {
-        sendData("DSS");
-        digole_write(m);
+        Print::print("DSS");
+        write(m);
     } //display start screen
 
     void setMode(uint8_t m) {
-        sendData("DM");
-        digole_write(m);
+        Print::print("DM");
+        write(m);
     } //set display mode
 
     void setTextPosBack(void) {
-        sendData("ETB");
+        Print::print("ETB");
     } //set text position back to previous, only one back allowed
 
     void setTextPosOffset(char xoffset, char yoffset) {
-        sendData("ETO");
-        digole_write(xoffset);
-        digole_write(yoffset);
+        Print::print("ETO");
+        write(xoffset);
+        write(yoffset);
     }
 
     void setTextPosAbs(uint8_t x, uint8_t y) {
-        sendData("ETP");
-        digole_write(x);
-        digole_write(y);
+        Print::print("ETP");
+        write(x);
+        write(y);
     }
     void setLinePattern(uint8_t pattern) {
-        sendData("SLP");
-        digole_write(pattern);
+        Print::print("SLP");
+        write(pattern);
      }
     void setLCDChip(uint8_t chip) {      //only for universal LCD adapter
-        sendData("SLCD");
-        digole_write(chip);
+        Print::print("SLCD");
+        write(chip);
      }
     void setBackLight(uint8_t bl){
-        sendData("BL");
-        digole_write(bl);
+        Print::print("BL");
+        write(bl);
     }
     void uploadStartScreen(int lon, const unsigned char *data); //upload start screen
     void uploadUserFont(int lon, const unsigned char *data, uint8_t sect); //upload user font
-    void digitalOutput(uint8_t x) {sendData("DOUT");digole_write(x);}
+    void digitalOutput(uint8_t x) {Print::print("DOUT");write(x);}
 private:
     unsigned long _Baud;
     HardwareSerial *_mySerial;

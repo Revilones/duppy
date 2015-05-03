@@ -241,9 +241,9 @@ class MySensor : public RF24
 	void debugPrint(const char *fmt, ... );
 	int freeRam();
 #endif
+	NodeConfig nc; // Essential settings for node to work
 
   protected:
-	NodeConfig nc; // Essential settings for node to work
 	ControllerConfig cc; // Configuration coming from controller
 	bool repeaterMode;
 	bool autoFindParent;

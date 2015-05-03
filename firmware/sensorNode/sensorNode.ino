@@ -5,18 +5,8 @@
 #include <MySensor.h>
 #include <SPI.h>
 #include <DHT.h>
-#include <Adafruit_GFX.h>
 #include <DigoleSerial.h>
 #include <Wire.h>
-
-#define DEBUG_PRINT(serial, msg) \
-            Serial.print(msg);
-
-#define DEBUG_PRINTLN(serial, msg) \
-            Serial.println(msg);   \
-            
-#define DEBUG_PRINTLN(serial, msg) \
-            Serial.println(msg);   \
 
 #define SUCCESS 0
 #define ERROR_INTERNAL -1
@@ -24,14 +14,20 @@
 #define CHILD_ID_HUM 0
 #define CHILD_ID_TEMP 1
 #define CHILD_ID_CO2 2
-unsigned long SLEEP_TIME = 30000; // Sleep time between reads (in milliseconds)
 
 #define HUMIDITY_SENSOR_DIGITAL_PIN A3
 #define STATUS_LED   A2
+#define LCD_BL 50
+
 #define BUTTON_UP    5
 #define BUTTON_DOWN  6
 #define BUTTON_BACK  7
 #define BUTTON_ENTER 8
+#define NO_BUTTON -1
+
+#define READINGS      0
+#define SENSOR_ID     1
+#define DISPLAY_OFF   2
 
 DigoleSerialDisp mydisp(&Wire,'\x27');
 MySensor gw;
@@ -57,7 +53,6 @@ int readTemperature(float *Temperature)
     temperature = dht.getTemperature();
     
     if (isnan(temperature)) {
-        //Serial.println("Failed reading temperature from DHT");
         error = ERROR_INTERNAL;
         goto error;
     } else {
@@ -66,9 +61,6 @@ int readTemperature(float *Temperature)
             temperature = dht.toFahrenheit(temperature);
 	    }
     }
-    
-    //DEBUG_PRINT(Serial,"T: ");
-    //DEBUG_PRINTLN(Serial,temperature);
     
     *Temperature = temperature;
 
@@ -93,13 +85,9 @@ int readHumidity(float *Humidity)
     
     humidity = dht.getHumidity();
     if (isnan(humidity)) {
-      //Serial.println("Failed reading humidity from DHT");
       error = ERROR_INTERNAL;
       goto error;
-    } else {
-      //DEBUG_PRINT(Serial,"H: ");
-      //DEBUG_PRINTLN(Serial,humidity);
-    }
+    } 
     
     *Humidity = humidity;
     
@@ -136,7 +124,270 @@ error:
     goto cleanup;
 }
 
-void setup() 
+typedef struct button_state {
+    long lastDebounceTime;
+    boolean lastBounceState;
+    boolean lastState;
+    boolean currentState;
+}; 
+
+long debounceDelay = 10;
+
+int debounceButton(int buttonPin, struct button_state *pState)
+{
+    int error = SUCCESS;
+    boolean reading = digitalRead(buttonPin);
+  
+    if (reading != pState->lastBounceState)
+    {
+        pState->lastDebounceTime = millis();
+    } 
+    
+    pState->lastBounceState = reading;
+
+    if ((millis() - pState->lastDebounceTime) > debounceDelay)
+    {
+        pState->currentState = reading;
+    }
+    else
+    {
+        error = ERROR_INTERNAL;
+    }
+
+    return error;
+}
+
+struct button_state upState = {0};
+struct button_state downState = {0};
+struct button_state backState = {0};
+struct button_state enterState = {0};
+
+int getButtonPress()
+{
+    int button = NO_BUTTON;
+
+    if (debounceButton(BUTTON_UP, &upState) == SUCCESS &&
+        upState.currentState != upState.lastState)
+    {
+        if (upState.currentState == HIGH)
+        {
+            button = BUTTON_UP;
+        }
+        upState.lastState = upState.currentState;
+    } 
+    else if(debounceButton(BUTTON_DOWN, &downState) == SUCCESS &&
+        downState.currentState != downState.lastState)
+    {
+        if (downState.currentState == HIGH)
+        {
+            button = BUTTON_DOWN;
+        }
+        downState.lastState = downState.currentState;
+    } 
+    else if (debounceButton(BUTTON_BACK, &backState) == SUCCESS &&
+        backState.currentState != backState.lastState)
+    {
+        if (backState.currentState == HIGH)
+        {
+            button = BUTTON_BACK;
+        }
+        backState.lastState = backState.currentState;
+    } 
+    else if (debounceButton(BUTTON_ENTER, &enterState) == SUCCESS &&
+        enterState.currentState != enterState.lastState)
+    {
+        if (enterState.currentState == HIGH)
+        {
+            button = BUTTON_ENTER;
+        }
+        enterState.lastState = enterState.currentState;
+    } 
+    else
+    {
+        button = NO_BUTTON;
+    }
+
+    return button;
+}
+
+void changeCursor(int prevCursor, int cursor)
+{
+    mydisp.setMode('~');
+    mydisp.drawBox(0, 40*prevCursor, 160, 30);
+    mydisp.drawBox(0, 40*cursor, 160, 30);
+}
+
+void displayMenu()
+{
+    mydisp.setPrintPos(0, 1, _TEXT_);
+    mydisp.setFont(51);
+    mydisp.print("Readings");
+    mydisp.nextTextLine();
+    mydisp.setFont(18);
+    mydisp.nextTextLine();
+    mydisp.setFont(51);
+    mydisp.print("Sensor ID");
+    mydisp.nextTextLine();
+    mydisp.setFont(18);
+    mydisp.nextTextLine();
+    mydisp.setFont(51);
+    mydisp.print("Display Off");
+
+    mydisp.setMode('~');
+    mydisp.drawBox(0, 0, 160, 30);
+}
+
+void displayReadings()
+{
+    int error = 0;
+    long now = 0;
+    int button = NO_BUTTON;
+    float temperature = 0;
+    float humidity = 0;
+    double co2 = 0;
+
+    while(1)
+    {
+        error = readTemperature(&temperature);
+        if (error == SUCCESS) {
+            gw.send(msgTemp.set(temperature, 1));
+        }
+        
+        error = readHumidity(&humidity);
+        if (error == SUCCESS) {
+            gw.send(msgHum.set(humidity, 1));
+        }
+        
+        // Get CO2 value from sensor
+        error = readCo2(&co2);
+        if (error == SUCCESS) {
+            gw.send(msgCo2.set(co2, 1));
+        }
+        
+        digitalWrite(STATUS_LED, !digitalRead(STATUS_LED));
+    
+        mydisp.setFont(10);
+        mydisp.setPrintPos(0, 1, _TEXT_);
+        mydisp.nextTextLine();
+        mydisp.setFont(51);
+        mydisp.print("Hum: ");
+        mydisp.print(humidity);
+        mydisp.nextTextLine();
+        mydisp.setFont(18);
+        mydisp.nextTextLine();
+        mydisp.setFont(51);
+        mydisp.print("Tmp: ");
+        mydisp.print(temperature);
+        mydisp.nextTextLine();
+        mydisp.setFont(18);
+        mydisp.nextTextLine();
+        mydisp.setFont(51);
+        mydisp.print("Co2: ");
+        mydisp.print(co2);
+    
+        now = millis();
+        while((now + 6000) > millis())
+        {
+            button = getButtonPress();
+            if (button != NO_BUTTON)
+            {
+                mydisp.setBackLight(LCD_BL);
+                return;
+            }
+        }
+    }
+}
+    
+void displaySensorId()
+{
+    int button = NO_BUTTON;
+    long now = 0;
+
+    mydisp.setPrintPos(3, 1, _TEXT_);
+    mydisp.setFont(51);
+    mydisp.print("Sensor ID");
+    mydisp.nextTextLine();
+    mydisp.setFont(123);
+    mydisp.setPrintPos(20, 2);
+    mydisp.print(gw.nc.nodeId);
+
+    now = millis();
+    while((now + 20000) > millis())
+    {
+        button = getButtonPress();
+        if (button != NO_BUTTON)
+        {
+            return;
+        }
+    }
+
+    mydisp.setBackLight(50);
+    return;
+}
+
+void menu()
+{
+    int button = NO_BUTTON;
+    int prevCursor = 0;
+    int cursor = 0;
+
+    mydisp.clearScreen();
+    displayMenu();
+
+    while(1)
+    {
+        button = getButtonPress();
+        if (button != NO_BUTTON)
+        {
+            switch(button)
+            {
+                case BUTTON_UP:
+                    if (cursor > 0)
+                    {
+                        prevCursor = cursor;
+                        cursor--;
+                        changeCursor(prevCursor, cursor);
+                    }
+                    break;
+                case BUTTON_DOWN:
+                    if (cursor < 2)
+                    {
+                        prevCursor = cursor;
+                        cursor++;
+                        changeCursor(prevCursor, cursor);
+                    }
+                    break;
+                case BUTTON_BACK:
+                    break;
+                case BUTTON_ENTER:
+                    mydisp.clearScreen();
+                    switch(cursor)
+                    {
+                        case READINGS:
+                            displayReadings();
+                            break;
+                        case SENSOR_ID:
+                            displaySensorId();
+                            break;
+                        case DISPLAY_OFF:
+                            mydisp.setBackLight(0);
+                            displayReadings();
+                            break;
+                        default:
+                            break;
+                    }
+                    mydisp.clearScreen();
+                    displayMenu();
+                    cursor = 0;
+                    prevCursor = 0;
+                    button = NO_BUTTON;
+                    break;
+            }
+        }
+    }
+}
+
+void setup()
 { 
     //Delay for Second to allow DHT to initialize
     delay(1000);
@@ -155,7 +406,7 @@ void setup()
     mydisp.displayConfig(1);
     mydisp.setI2CAddress(0x29);
     mydisp.clearScreen();
-    mydisp.setBackLight(70);
+    mydisp.setBackLight(LCD_BL);
 
     dht.setup(HUMIDITY_SENSOR_DIGITAL_PIN); 
 
@@ -174,53 +425,12 @@ void setup()
     
     //Initialize Display
     mydisp.clearScreen();
-    mydisp.setTextSize(3);
-    mydisp.setTextColor(252, 0x0);
-    mydisp.setCursor(10, 10);
-    mydisp.println("Hum: ");
-    mydisp.setCursor(10, 50);
-    mydisp.println("Tmp: ");
-    mydisp.setCursor(10, 90);
-    mydisp.println("Co2: ");
+    mydisp.setFont(51);
+    
+    delay(1000);
 }
  
 void loop()
 {
-    int error = 0;
-    float temperature = 0;
-    float humidity = 0;
-    double co2 = 0;
-    
-    error = readTemperature(&temperature);
-    if (error == SUCCESS) {
-        gw.send(msgTemp.set(temperature, 1));
-    }
-    
-    error = readHumidity(&humidity);
-    if (error == SUCCESS) {
-        gw.send(msgHum.set(humidity, 1));
-    }
-    
-    // Get CO2 value from sensor
-    error = readCo2(&co2);
-    if (error == SUCCESS) {
-        gw.send(msgCo2.set(co2, 1));
-    }
-    
-    //mydisp.drawBox(80, 10, 60, 20, 0);
-    //mydisp.drawBox(80, 50, 60, 20, 0);
-    //mydisp.drawBox(80, 90, 80, 20, 0);
-
-    mydisp.setTextColor(75, 0);
-    mydisp.setCursor(85, 10);
-    mydisp.println((int)humidity);
-    mydisp.setCursor(85, 50);
-    mydisp.println((int)temperature);
-    mydisp.setCursor(85, 90);
-    mydisp.println((int)co2);
-    
-    digitalWrite(STATUS_LED, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(5000);               // wait for a second
-    digitalWrite(STATUS_LED, LOW);    // turn the LED off by making the voltage LOW
-    delay(5000);               // wait for a second
+    menu();
 }

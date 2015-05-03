@@ -4,7 +4,6 @@
  */
 #define _Digole_Serial_I2C_  //To tell compiler compile the special communication only, 
 //all available are:_Digole_Serial_UART_, _Digole_Serial_I2C_ and _Digole_Serial_SPI_
-#include <Adafruit_GFX.h>
 #include <DigoleSerial.h>
 //--------UART setup
 #if defined(_Digole_Serial_UART_)
@@ -125,8 +124,8 @@ void setup() {
 //  {
 //    mydisp.Print::print(random(255));
 //  }
-  mydisp.displayConfig(1);    //set config display ON, 0=off
-  mydisp.setI2CAddress(0x29);  //this function only working when you connect using I2C, from 1 to 127
+  //mydisp.displayConfig(1);    //set config display ON, 0=off
+  //mydisp.setI2CAddress(0x29);  //this function only working when you connect using I2C, from 1 to 127
   //delay(1000);
   //mydisp.setLCDColRow(16,2);  //set LCD Col and Row, only time set up is OK
 mydisp.displayConfig(0);
@@ -267,7 +266,7 @@ mydisp.disableCursor(); //disable cursor, enable cursore use: enableCursor();
   mydisp.drawStr(0, 0, "draw Pixels");
   for (uint8_t i = 0; i < 20; i++) {
     mydisp.setColor(random(254)+1);
-    mydisp.drawPixel(random(SC_W-1), 12 + random(SC_H-13), 125);
+    mydisp.drawPixel(random(SC_W-1), 12 + random(SC_H-13));
   }
   //test drawing Lines
   resetpos1();
