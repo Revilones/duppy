@@ -12,4 +12,3 @@ class Orginization(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     users = models.ManyToMany(User)
     controllers = models.ManyToMany(Controller)
-

@@ -9,10 +9,12 @@ LOG_FILE = "/var/log/bespin_adapter.log"
 
 PID_FILE = "/var/run/bespin_adapter.pid"
 
+NODEID_FILE ="nodeid"
+
 USE_METRIC = False
 
-API_HOST = "127.0.0.1"
+API_HOST = "192.168.0.106"
 API_PORT = 8000
-API_TOKEN = "7c5ae543f7e00afa8835c517bc58291d895c3fba"
-API_CONTROLLERID = "40db918b5dd8ffa721cc42f5c7f48bdfa47d8d36"
+API_TOKEN = "46ccf3efb84dddc2659c1606efe34a443d43c5e9"
+API_CONTROLLERID = "0247d31222410c62660d9e6927fe558fd037bd70"
 

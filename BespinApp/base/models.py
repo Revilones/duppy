@@ -5,6 +5,15 @@ from django.contrib.auth.models import User as BaseUser
 from django.db import models
 from django.db.models import Count, Avg
 
+CO2 = 'co2'
+TMP = 'temperature'
+HUM = 'humidity'
+SENSOR_TYPES = (
+    (CO2, 'Co2'),
+    (TMP, 'Temperature'),
+    (HUM, 'Humidity'),
+)
+
 class User(BaseUser):
     class Meta:
         proxy = True
@@ -68,7 +77,9 @@ class Sensor(models.Model):
     node = models.ForeignKey(Node)
     name = models.CharField(max_length=250)
     sensor_id = models.IntegerField()
-    sensor_type = models.CharField(max_length=250)
+    sensor_type = models.CharField(max_length=250,
+                                   choices=SENSOR_TYPES,
+                                   default=CO2)
 
     def __str__(self):
         return "[%s.%s] %s" % (self.node.node_id, self.sensor_id, self.name)
@@ -111,7 +122,7 @@ class Data(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     # override model manager
-    objects = DataManager()
+    #objects = DataManager()
 
     class Meta:
         get_latest_by = "created"

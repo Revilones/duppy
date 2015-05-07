@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Room, RoomSensorsRelationship
+from .models import Room, RoomSensorsRelationship, RoomMonitorRelationship
 
 class RoomFilter(admin.SimpleListFilter):
 
@@ -25,3 +25,4 @@ class RoomSensorsRelationshipAdmin(admin.ModelAdmin):
 
 admin.site.register(Room, RoomAdmin)
 admin.site.register(RoomSensorsRelationship, RoomSensorsRelationshipAdmin)
+admin.site.register(RoomMonitorRelationship)

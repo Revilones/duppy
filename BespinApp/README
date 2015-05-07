@@ -4,10 +4,11 @@
 
     sudo apt-get install virtualenv
     virtualenv ~/.virtualenvs/bespin
-    source ~/.virtualenv/bespin/bin/activate
+    source ~/.virtualenvs/bespin/bin/activate
 
 ### Install
 
     pip install -r requirements.txt
+    apt-get install rabbitmq-server
     python manage.py syncdb
     python manage.py runserver
