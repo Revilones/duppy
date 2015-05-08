@@ -1,13 +1,18 @@
 
 
-### Setting up virtualenv
+
+## Setup virtualenv ##
+Website: https://virtualenv.pypa.io/en/latest/
 
     sudo apt-get install virtualenv
-    virtualenv ~/.virtualenvs/bespin
+    # or
+    sudo pip install virtualenv
+
+### Create a virtual python environment
+    virtualenv --no-site- PATH
     source ~/.virtualenv/bespin/bin/activate
 
-### Install
-
+## Install bespin
     pip install -r requirements.txt
     python manage.py syncdb
     python manage.py runserver
