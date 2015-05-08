@@ -34,8 +34,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    #'grappelli',
-    #'suit',
     'djcelery',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,10 +41,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #'rest_framework_swagger',
+    'base',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_swagger',
-    'base',
     'api',
     'webcam',
     'home',
