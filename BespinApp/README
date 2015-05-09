@@ -17,3 +17,8 @@ Website: https://virtualenv.pypa.io/en/latest/
     apt-get install rabbitmq-server
     python manage.py syncdb
     python manage.py runserver
+
+### Run celery
+    python manage.py celery beat
+    python manage.py celery worker
+    Add a Tesk in the webui

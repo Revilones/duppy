@@ -14,10 +14,6 @@ SENSOR_TYPES = (
     (HUM, 'Humidity'),
 )
 
-class User(BaseUser):
-    class Meta:
-        proxy = True
-
 #class Datum(models.Model):
 #    nodeid = models.IntegerField()
 #    sensorid = models.IntegerField()
