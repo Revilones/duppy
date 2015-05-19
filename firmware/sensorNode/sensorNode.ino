@@ -16,7 +16,7 @@
 #define CHILD_ID_CO2 2
 
 #define HUMIDITY_SENSOR_DIGITAL_PIN A3
-#define STATUS_LED   A2
+#define STATUS_LED A2
 #define LCD_BL 50
 
 #define BUTTON_UP    5
@@ -169,7 +169,7 @@ int getButtonPress()
     if (debounceButton(BUTTON_UP, &upState) == SUCCESS &&
         upState.currentState != upState.lastState)
     {
-        if (upState.currentState == HIGH)
+        if (upState.currentState == LOW)
         {
             button = BUTTON_UP;
         }
@@ -178,7 +178,7 @@ int getButtonPress()
     else if(debounceButton(BUTTON_DOWN, &downState) == SUCCESS &&
         downState.currentState != downState.lastState)
     {
-        if (downState.currentState == HIGH)
+        if (downState.currentState == LOW)
         {
             button = BUTTON_DOWN;
         }
@@ -187,7 +187,7 @@ int getButtonPress()
     else if (debounceButton(BUTTON_BACK, &backState) == SUCCESS &&
         backState.currentState != backState.lastState)
     {
-        if (backState.currentState == HIGH)
+        if (backState.currentState == LOW)
         {
             button = BUTTON_BACK;
         }
@@ -196,7 +196,7 @@ int getButtonPress()
     else if (debounceButton(BUTTON_ENTER, &enterState) == SUCCESS &&
         enterState.currentState != enterState.lastState)
     {
-        if (enterState.currentState == HIGH)
+        if (enterState.currentState == LOW)
         {
             button = BUTTON_ENTER;
         }
@@ -303,12 +303,9 @@ void displaySensorId()
     int button = NO_BUTTON;
     long now = 0;
 
-    mydisp.setPrintPos(3, 1, _TEXT_);
+    mydisp.setPrintPos(1, 4, _TEXT_);
     mydisp.setFont(51);
-    mydisp.print("Sensor ID");
-    mydisp.nextTextLine();
-    mydisp.setFont(123);
-    mydisp.setPrintPos(20, 2);
+    mydisp.print("Sensor ID ");
     mydisp.print(gw.nc.nodeId);
 
     now = millis();
@@ -330,12 +327,22 @@ void menu()
     int button = NO_BUTTON;
     int prevCursor = 0;
     int cursor = 0;
+    long now = 0;
 
     mydisp.clearScreen();
     displayMenu();
 
+    now = millis();
+
     while(1)
     {
+        if (millis() > (now + 10000))
+        {
+            mydisp.clearScreen();
+            displayReadings();
+            goto resetMenu;
+        }	
+
         button = getButtonPress();
         if (button != NO_BUTTON)
         {
@@ -376,11 +383,13 @@ void menu()
                         default:
                             break;
                     }
+resetMenu:
                     mydisp.clearScreen();
                     displayMenu();
                     cursor = 0;
                     prevCursor = 0;
                     button = NO_BUTTON;
+                    now = millis();
                     break;
             }
         }
