@@ -57,6 +57,11 @@ def upload_data(nodeid, sensorid, payload):
     response = api_post(uri, body=body)
     return response.read()
 
+def api_get_nodes(controller_id):
+    uri = "/api/controllers/%s/nodes" % (controller_id)
+    response = api_get(uri)
+    if response.status == 200:
+        return json.loads(response.read())
 
 def api_get_node(controller_id, node_id):
     uri = "/api/controllers/%s/nodes/%s" % (controller_id, node_id)
@@ -187,20 +192,22 @@ def command_internal_gateway_ready(nodeid, sensorid, payload):
     """
     LOG.info("Gateway ready")
 
-NODEID = 1
-
 def command_id_request(nodeid, sensorid, payload):
     """
     Node is requesting id.
     """
-    global NODEID 
-    data = NODEID
-    NODEID = NODEID + 1
-    file(settings.NODEID_FILE, 'w+').write("%s\n" % NODEID)
+    nodes = api_get_nodes(settings.API_CONTROLLERID)
+    node_ids = {}
+    for node in nodes:
+        node_ids[node['node_id']] = True 
 
-    LOG.info("Id Request sending id:%d" % data)
+    for newNodeId in range (1,255):
+        if newNodeId not in node_ids:
+            break
+
+    LOG.info("Id Request sending id:%d" % newNodeId)
     return encode_command(nodeid, sensorid, mysensors.C_INTERNAL, 0, \
-            mysensors.I_ID_RESPONSE, data)
+            mysensors.I_ID_RESPONSE, newNodeId)
 
 HANDLERS = {}
 def register_action(msgtype, subtype, func):
@@ -294,16 +301,6 @@ def parse_args():
 class BespinAdapter(daemon.Daemon):
 
     def __init__(self, device=None, run_as_daemon=True, log_file=None):
-        #Init Id File
-        global NODEID
-        try:
-            with file(settings.NODEID_FILE, 'r') as idfile:
-                NODEID = int(idfile.read().strip())
-        except IOError:
-                NODEID = 1
-                file(settings.NODEID_FILE, 'w+').\
-                                write("%s\n" % NODEID)
-
         if not log_file:
             log_file = settings.LOG_FILE
         super(BespinAdapter, self).__init__(settings.PID_FILE, \
