@@ -1,25 +1,3 @@
-//
-// Box for L/C meter
-// LC 100S
-//
-// by Egil Kvaleberg
-//
-// mod by Michael Witt 6/27/2014 for LC-100A
-// add 4th button, 
-// adjusted power, lead and port locations  
-// slightly increased LCD cutout, 
-// place pieces in print layout
-// clarify documentation
-//
-// further mod by Egil:
-// fine tuned, moved func-button
-// added proper func-button
-//
-//  note on building:
-//  make sure support_w is actually built. depending on your settings, 
-//  you may have to increase it slightly
-//
-
 //  part is any of:
 //  "upper" "lower" "button" "all"
 //
@@ -41,27 +19,6 @@ corner_r = 2;
 wall = 2.0;
 floor = 2.0;
 chamfer1 = 0.8; // chamfer around edge
-
-dht_x = 70;
-dht_y = 24; //
-dht_z = 8.0; 
-dht_h = 4.0; // max support height
-dht_dy = 20; //24.2
-dht_dx = 15.1; // 71.1
-
-lcd_x = 19.7;
-lcd_y = 16; //
-lcd_z = 8.0; 
-lcd_h = 4.0; // max support height
-lcd_dy = 34; //24.2
-lcd_dx = 43.6; // 71.1
-
-mnt_dy = 45.8; 
-mnt_lcd_dy = 31.0; 
-mnt_lcd_dz = 3.0; 
-mnt_dx = 75.0; // was 75.3
-mnt_d = 3.2; 
-mnt_head = 5.5; // screw head
 
 button_x = 8.51;
 button_d = 7.62; // hole for pushbutton, diameter 
@@ -94,7 +51,7 @@ view();
 //*****************************************************************************
 // 
 
-module rcyl(rr, hh,chamfer)
+module rcyl(rr, hh, chamfer)
 {
 	union () {
 		if (chamfer > 0) {
@@ -116,31 +73,43 @@ module rcube(dx, dy, dz, chamfer)
 	}
 }
 
+mnt_dy = 45.8;
+mnt_dx = 75.0;
+pcb_mnt_d_inner = 3.2;
+pcb_mnt_d_outer = 6;
 
-module core()
+module pcbMountingHoles()
 {
-	union () {
-		translate([-core_x/2, -core_y/2, floor]) rcube(core_x, core_y, core_z+fudge, chamfer1);
-		translate([-(core_x/2+wall/2), -(core_y/2+wall/2), floor+core_z]) rcube(core_x+wall, core_y+wall, lip_dz+fudge, 0);
+	// mounting holes
+	difference() {
+	translate([19.42+wall, 54.61+wall, 0]) cylinder(r2=pcb_mnt_d_outer/2, r1=pcb_mnt_d_outer/2, h=floor+20*fudge);
+	translate([19.42+wall, 54.61+wall, 0]) cylinder(r2=pcb_mnt_d_inner/2, r1=pcb_mnt_d_inner/2, h=floor+20*fudge);
+	}
+
+	difference() {
+	translate([15.6+wall, 6.35+wall, 0]) cylinder(r2=pcb_mnt_d_outer/2, r1=pcb_mnt_d_outer/2, h=floor+20*fudge);
+	translate([15.61+wall, 6.35+wall, 0]) cylinder(r2=pcb_mnt_d_inner/2, r1=pcb_mnt_d_inner/2, h=floor+20*fudge);
+	}
+
+	difference() {
+	translate([79.1+wall, 54.6+wall, 0]) cylinder(r2=pcb_mnt_d_outer/2, r1=pcb_mnt_d_outer/2, h=floor+20*fudge);
+	translate([79.1+wall, 54.6+wall, 0]) cylinder(r2=pcb_mnt_d_inner/2, r1=pcb_mnt_d_inner/2, h=floor+20*fudge);
+	}
+
+	difference() {
+	translate([79.1+wall, 6.35+wall, 0]) cylinder(r2=pcb_mnt_d_outer/2, r1=pcb_mnt_d_outer/2, h=floor+20*fudge);
+	translate([79.1+wall, 6.35+wall, 0]) cylinder(r2=pcb_mnt_d_inner/2, r1=pcb_mnt_d_inner/2, h=floor+20*fudge);
 	}
 }
 
 module plugs() // for lower part
 {
 	//swtch and frame
-	translate([core_x/2-fudge, switch_dy-switch_d2/2, switch_dz-switch_d1/2]) 
+	translate([core_x-fudge, switch_dy-switch_d2, switch_dz-switch_d1]) 
 		cube(size = [wall+2*fudge, switch_d2, switch_d1]);
-	translate([core_x/2+wall/2, switch_dy-(switch_d2/2+switch_frame), switch_dz-(switch_d1/2+switch_frame)]) 
-		cube(size = [wall/2+fudge, switch_d2+2*switch_frame, switch_d1+2*switch_frame]);
-
-	// mounting holes
-	translate([mnt_dx/2, mnt_dy/2, -fudge]) cylinder(r2=mnt_d/2, r1=mnt_head/2, h=floor+2*fudge);
-	translate([-mnt_dx/2, mnt_dy/2, -fudge]) cylinder(r2=mnt_d/2, r1=mnt_head/2, h=floor+2*fudge);
-	translate([mnt_dx/2, -mnt_dy/2, -fudge]) cylinder(r2=mnt_d/2, r1=mnt_head/2, h=floor+2*fudge);
-	translate([-mnt_dx/2, -mnt_dy/2, -fudge]) cylinder(r2=mnt_d/2, r1=mnt_head/2, h=floor+2*fudge);
-
+	translate([core_x+wall, switch_dy-(switch_d2/2+switch_frame), switch_dz-(switch_d1/2+switch_frame)]) 
+		cube(size = [wall+fudge, switch_d2+2*switch_frame, switch_d1+2*switch_frame]);
 }
-
 
 module pattern_sub() // pattern on rear wall
 {
@@ -160,7 +129,7 @@ module shell()
 	difference () {
 		union () {
 			difference () {
-				translate([-wall-core_x/2, -wall-core_y/2, 0]) 
+				translate([0, 0, 0]) 
 					rcube(core_x+2*wall, core_y+2*wall, core_z+floor+lip_dz, chamfer1);
 				pattern_sub();
 			}
@@ -171,6 +140,14 @@ module shell()
 	}
 }
 
+module core()
+{
+	union () {
+		translate([wall, wall, floor]) rcube(core_x, core_y, core_z+fudge, chamfer1);
+		translate([wall, wall, floor+core_z]) rcube(core_x+wall, core_y+wall, lip_dz+fudge, 0);
+	}
+}
+
 module lower()
 {
 	difference () {
@@ -178,8 +155,60 @@ module lower()
 		    	difference () {
 				shell();
 				core();
-		    	}	
+		    	}
+			pcbMountingHoles();
 	    	}
+	}
+}
+
+lcd_x = 19.7;
+lcd_y = 16;
+lcd_z = 8.0; 
+
+lcd_h = 4.0;
+lcd_dy = 34;
+lcd_dx = 43.6;
+
+lcd_mnt_d_inner = 2;
+lcd_mnt_d_outer = 4;
+lcd_mnt_h = 2;
+
+module lcdMountingHoles()
+{
+	difference () {
+		union () {
+		translate([lcd_x-2.3, lcd_y, lcd_z-lcd_mnt_h]) cylinder(r1=lcd_mnt_d_outer/2, r2=lcd_mnt_d_outer/2, h=lcd_mnt_h);
+		translate([lcd_x-2.3, lcd_y+32.2, lcd_z-lcd_mnt_h]) cylinder(r1=lcd_mnt_d_outer/2, r2=lcd_mnt_d_outer/2,  h=lcd_mnt_h);
+		translate([lcd_x+46, lcd_y, lcd_z-lcd_mnt_h]) cylinder(r1=lcd_mnt_d_outer/2, r2=lcd_mnt_d_outer/2,  h=lcd_mnt_h);
+		translate([lcd_x+46, lcd_y+32.2, lcd_z-lcd_mnt_h]) cylinder(r1=lcd_mnt_d_outer/2 ,r2=lcd_mnt_d_outer/2,  h=lcd_mnt_h);
+		}
+		union () {
+		translate([lcd_x-2.3, lcd_y, lcd_z-lcd_mnt_h]) cylinder(r1=lcd_mnt_d_inner/2, r2=lcd_mnt_d_inner/2, h=lcd_mnt_h);
+		translate([lcd_x-2.3, lcd_y+32.2, lcd_z-lcd_mnt_h]) cylinder(r1=lcd_mnt_d_inner/2, r2=lcd_mnt_d_inner/2, h=lcd_mnt_h);
+		translate([lcd_x+46, lcd_y, lcd_z-lcd_mnt_h]) cylinder(r1=lcd_mnt_d_inner/2, r2=lcd_mnt_d_inner/2, h=lcd_mnt_h);
+		translate([lcd_x+46, lcd_y+32.2, lcd_z-lcd_mnt_h]) cylinder(r1=lcd_mnt_d_inner/2, r2=lcd_mnt_d_inner/2, h=lcd_mnt_h);
+		}
+	}
+}
+
+dht_x = 70;
+dht_y = 24;
+dht_z = 8.0; 
+dht_h = 4.0;
+dht_dy = 20;
+dht_dx = 15.1;
+
+dht_mnt_h = 1;
+dht_mnt_d_inner = 1;
+dht_mnt_d_outer = 3;
+dht_mnt_x = dht_x + (dht_dy/2);
+dht_mnt_y = dht_y - (dht_mnt_d_outer/2);
+
+module dhtMountingHole()
+{
+	difference () {
+		translate([dht_mnt_x, dht_mnt_y, dht_z-dht_mnt_h]) cylinder(r1=dht_mnt_d_outer/2, r2=dht_mnt_d/2, h=dht_mnt_h);
+		translate([dht_mnt_x, dht_mnt_y, dht_z-dht_mnt_h]) cylinder(r1=dht_mnt_d_inner/2, r2=dht_mnt_d/4, h=dht_mnt_h);
 	}
 }
 
@@ -216,14 +245,10 @@ module upper()
 				translate([button_x, back_y, lcd_z-fudge]) cylinder(r=button_d/2, h=floor+2*fudge);
 				translate([button_x, up_y, lcd_z-fudge]) cylinder(r=button_d/2, h=floor+2*fudge);
 				translate([button_x, down_y, lcd_z-fudge]) cylinder(r=buttonFunc_d/2, h=floor+2*fudge); 
-
-				// mounting holes
-				translate([mnt_dx/2, -(mnt_lcd_dy-mnt_dy/2), lcd_z-fudge]) cylinder(r1=mnt_d/2, r2=mnt_head/2,  h=floor+2*fudge);
-				translate([-mnt_dx/2, -(mnt_lcd_dy-mnt_dy/2), lcd_z-fudge]) cylinder(r1=mnt_d/2, r2=mnt_head/2,  h=floor+2*fudge);
-				translate([mnt_dx/2, mnt_dy/2, lcd_z-fudge]) cylinder(r1=mnt_d/2, r2=mnt_head/2,  h=floor+2*fudge);
-				translate([-mnt_dx/2, mnt_dy/2, lcd_z-fudge]) cylinder(r1=mnt_d/2 ,r2=mnt_head/2,  h=floor+2*fudge);
 			}
 		}
+		lcdMountingHoles();
+		dhtMountingHole();
 	}
 }
 
