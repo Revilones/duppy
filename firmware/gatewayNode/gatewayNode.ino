@@ -40,6 +40,7 @@ boolean commandComplete = false;  // whether the string is complete
 void setup()  
 { 
   gw.begin();
+  gw.setPayloadSize(16);
 }
 
 void loop()  

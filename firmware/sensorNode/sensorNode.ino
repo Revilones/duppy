@@ -1,5 +1,6 @@
 #define _Digole_Serial_I2C_
 
+#include <bespinTypes.h>
 #include <PinChangeInt.h>
 #include <kSeries.h>
 #include <MySensor.h>
@@ -7,16 +8,16 @@
 #include <DHT.h>
 #include <DigoleSerial.h>
 #include <Wire.h>
-
-#define SUCCESS 0
-#define ERROR_INTERNAL -1
+#include "bespinSensor.h"
 
 #define CHILD_ID_HUM 0
 #define CHILD_ID_TEMP 1
 #define CHILD_ID_CO2 2
 
 #define HUMIDITY_SENSOR_DIGITAL_PIN A3
+//#define HUMIDITY_SENSOR_DIGITAL_PIN 3
 #define STATUS_LED A2
+//#define STATUS_LED 4
 #define LCD_BL 50
 
 #define BUTTON_UP    5
@@ -31,98 +32,13 @@
 
 DigoleSerialDisp mydisp(&Wire,'\x27');
 MySensor gw;
-DHT dht;
-kSeries K_30(3,4);
-float lastTemp;
-float lastHum;
+DHT gDHT;
+kSeries gK_30(3,4);
+//kSeries K_30(6,7);
 boolean metric = true; 
 MyMessage msgHum(CHILD_ID_HUM, V_HUM);
 MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
 MyMessage msgCo2(CHILD_ID_CO2, V_GAS);
-
-void writeTemperatureSrv(MySensor gw, float temperature)
-{
-    gw.send(msgTemp.set(temperature, 1));
-}
-
-int readTemperature(float *Temperature)
-{
-    int error = SUCCESS;
-    float temperature = 0;
-    
-    temperature = dht.getTemperature();
-    
-    if (isnan(temperature)) {
-        error = ERROR_INTERNAL;
-        goto error;
-    } else {
-	    if(metric == true)
-	    {
-            temperature = dht.toFahrenheit(temperature);
-	    }
-    }
-    
-    *Temperature = temperature;
-
-cleanup:
-    
-    return error;
-    
-error:
-
-    goto cleanup;
-}
-
-void writeHumidity(MySensor gw, float humidity)
-{
-    gw.send(msgHum.set(humidity, 1));
-}
-
-int readHumidity(float *Humidity)
-{
-    int error = SUCCESS;
-    float humidity = 0;
-    
-    humidity = dht.getHumidity();
-    if (isnan(humidity)) {
-      error = ERROR_INTERNAL;
-      goto error;
-    } 
-    
-    *Humidity = humidity;
-    
-cleanup:
-    
-    return error;
-    
-error:
-
-    goto cleanup;
-}
-
-int readCo2(double *Co2)
-{
-    int error = SUCCESS;
-    double co2 = 0;
-    
-    co2 = K_30.getCO2('p');
-    
-    if (co2 < 0)
-    {
-        error = ERROR_INTERNAL;
-        goto error;
-    }
-    
-    *Co2 = co2;
-
-cleanup:
-
-    return error;
-    
-error:
-
-    goto cleanup;
-}
 
 typedef struct button_state {
     long lastDebounceTime;
@@ -243,23 +159,22 @@ void displayReadings()
     long now = 0;
     int button = NO_BUTTON;
     float temperature = 0;
-    float humidity = 0;
+    float fHumidity = 0;
     double co2 = 0;
 
     while(1)
     {
-        error = readTemperature(&temperature);
+        error = readHumidity(gDHT, &fHumidity);
+        if (error == SUCCESS) {
+            gw.send(msgHum.set(fHumidity, 1));
+        }
+        
+        error = readTemperature(gDHT, metric, &temperature);
         if (error == SUCCESS) {
             gw.send(msgTemp.set(temperature, 1));
         }
         
-        error = readHumidity(&humidity);
-        if (error == SUCCESS) {
-            gw.send(msgHum.set(humidity, 1));
-        }
-        
-        // Get CO2 value from sensor
-        error = readCo2(&co2);
+        error = readCo2(gK_30, &co2);
         if (error == SUCCESS) {
             gw.send(msgCo2.set(co2, 1));
         }
@@ -271,7 +186,7 @@ void displayReadings()
         mydisp.nextTextLine();
         mydisp.setFont(51);
         mydisp.print("Hum: ");
-        mydisp.print(humidity);
+        mydisp.print(fHumidity);
         mydisp.nextTextLine();
         mydisp.setFont(18);
         mydisp.nextTextLine();
@@ -286,8 +201,9 @@ void displayReadings()
         mydisp.print(co2);
     
         now = millis();
-        while((now + 6000) > millis())
+        while((now + 10000) > millis())
         {
+            gw.process();
             button = getButtonPress();
             if (button != NO_BUTTON)
             {
@@ -417,10 +333,12 @@ void setup()
     mydisp.clearScreen();
     mydisp.setBackLight(LCD_BL);
 
-    dht.setup(HUMIDITY_SENSOR_DIGITAL_PIN); 
+    gDHT.setup(HUMIDITY_SENSOR_DIGITAL_PIN); 
 
     //Initialize Gateway 
-    gw.begin(NULL, AUTO, false, AUTO, RF24_PA_LEVEL, RF24_CHANNEL, RF24_DATARATE);
+    gw.begin(NULL, AUTO, true/*Repeater Mode*/, AUTO, RF24_PA_LEVEL, RF24_CHANNEL, RF24_DATARATE);
+
+    gw.setPayloadSize(16);
     
     // Send the Sketch Version Information to the Gateway
     gw.sendSketchInfo("Bespin", "1.0");

@@ -11,9 +11,10 @@ This demo code show you how to upload start screen and
  it again if unchanged, the adapter will store it in flash memory
  the DATA structure of user font is same as U8Glib
  */
-#define _Digole_Serial_UART_  //To tell compiler compile the special communication only, 
+#define _Digole_Serial_I2C_  //To tell compiler compile the special communication only, 
 //all available are:_Digole_Serial_UART_, _Digole_Serial_I2C_ and _Digole_Serial_SPI_
 #include <DigoleSerial.h>
+#include "welcomeScreen.h"
 //--------UART setup
 #if defined(_Digole_Serial_UART_)
 DigoleSerialDisp mydisp(&Serial, 9600); //UART:Arduino UNO: Pin 1(TX)on arduino to RX on module
@@ -30,7 +31,6 @@ DigoleSerialDisp mydisp(8,9,10);  //SPI:Pin 8: data, 9:clock, 10: SS, you can as
 #define LCDCol 16
 #define LCDRow 2
 #define LCDW 240
-#include <sampledata.h>
 void resetpos(void) //for demo use, reset display position and clean the demo line
 {
   mydisp.setPrintPos(0, 1,_TEXT_);
@@ -41,10 +41,15 @@ void resetpos(void) //for demo use, reset display position and clean the demo li
 void setup() {
   mydisp.begin();
   mydisp.clearScreen();
+  mydisp.displayConfig(1);
+  mydisp.setI2CAddress(0x29);
   mydisp.print("uploading start screen now...(1024 bytes)");
   delay(500);            //this delay is very important, it will let module to clear the receive buffer
-  mydisp.uploadStartScreen(1024,startscreenMV);
+  //mydisp.uploadStartScreen(1024,bespinWelcome);
+  mydisp.drawBitmap256(0, 0, 160, 128, bespinWelcome);
   delay(500);
+  //mydisp.displayStartScreen(1);
+#if 0
   mydisp.clearScreen();
   mydisp.print("uploading 1st user font now...(1423 bytes)");
   delay(500);            //this delay is very important, it will let module to clear the receive buffer
@@ -62,6 +67,7 @@ void setup() {
   mydisp.setFont(201);
   mydisp.drawStr(0,0,"my 2nd");
   mydisp.displayConfig(0);
+#endif
 }
 void loop() {
 }

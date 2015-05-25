@@ -28,6 +28,9 @@
 
 #include "DHT.h"
 
+
+static unsigned long lastReadTime;
+
 void DHT::setup(uint8_t pin, DHT_MODEL_t model)
 {
   DHT::pin = pin;
@@ -47,19 +50,19 @@ void DHT::setup(uint8_t pin, DHT_MODEL_t model)
 
 void DHT::resetTimer()
 {
-  DHT::lastReadTime = millis() - 3000;
+  lastReadTime = millis() - 3000;
 }
 
 float DHT::getHumidity()
 {
   readSensor();
-  return humidity;
+  return this->humidity;
 }
 
 float DHT::getTemperature()
 {
   readSensor();
-  return temperature;
+  return this->temperature;
 }
 
 #ifndef OPTIMIZE_SRAM_SIZE
@@ -119,8 +122,8 @@ void DHT::readSensor()
   }
   lastReadTime = startTime;
 
-  temperature = NAN;
-  humidity = NAN;
+  this->temperature = NAN;
+  this->humidity = NAN;
 
   // Request sample
 
@@ -190,16 +193,16 @@ void DHT::readSensor()
   // Store readings
 
   if ( model == DHT11 ) {
-    humidity = rawHumidity >> 8;
-    temperature = rawTemperature >> 8;
+    this->humidity = rawHumidity >> 8;
+    this->temperature = rawTemperature >> 8;
   }
   else {
-    humidity = rawHumidity * 0.1;
+    this->humidity = rawHumidity * 0.1;
 
     if ( rawTemperature & 0x8000 ) {
       rawTemperature = -(int16_t)(rawTemperature & 0x7FFF);
     }
-    temperature = ((int16_t)rawTemperature) * 0.1;
+    this->temperature = ((int16_t)rawTemperature) * 0.1;
   }
 
   error = ERROR_NONE;

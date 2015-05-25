@@ -121,6 +121,9 @@ void MySensor::setupRepeaterMode(){
 	eeprom_read_block((void*)childNodeTable, (void*)EEPROM_ROUTES_ADDRESS, 256);
 }
 
+void MySensor::setPayloadSize(uint8_t size) {
+    RF24::setPayloadSize(size);
+}
 
 uint8_t MySensor::getNodeId() {
 	return nc.nodeId;
@@ -256,7 +259,6 @@ void MySensor::requestTime(void (* _timeCallback)(unsigned long)) {
 	timeCallback = _timeCallback;
 	sendRoute(build(msg, nc.nodeId, GATEWAY_ADDRESS, NODE_SENSOR_ID, C_INTERNAL, I_TIME, false).set(""));
 }
-
 
 boolean MySensor::process() {
 	uint8_t pipe;
