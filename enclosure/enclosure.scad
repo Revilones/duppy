@@ -1,6 +1,3 @@
-//  part is any of:
-//  "upper" "lower" "button" "all"
-//
 
 part = "upper"; 
 has4buttons = true; // true if 4 buttons in a row
@@ -8,9 +5,6 @@ has_support = true; // true if support around LCD (to be removed afterwards)
 
 //*****************************************************************************
 // Adjustables
-
-support_w = 0.50; // one line wide
-
 core_x = 88.0; // core size, pplus margin
 core_y = 61.0;
 core_z = 20.0; // lower half
@@ -98,6 +92,56 @@ module pcbMountingHoles()
 	}
 }
 
+enclosure_conn_h = 5;
+enclosure_conn_z = upper_z+fudge-enclosure_conn_h;
+enclosure_mnt_r_inner = 1;
+enclosure_mnt_r_outer = 2;
+
+enclosure_conn_x0 = wall+enclosure_mnt_r_inner;
+enclosure_conn_y0 = wall+enclosure_mnt_r_inner;
+enclosure_conn_x = core_x+wall-enclosure_mnt_r_inner;
+enclosure_conn_y = core_y+wall-enclosure_mnt_r_inner;
+
+module enclosureConnectH()
+{
+	difference () {
+		union () {
+		translate([enclosure_conn_x0, enclosure_conn_y0, enclosure_conn_z])
+            cylinder(r1=enclosure_mnt_r_outer, r2=enclosure_mnt_r_outer, h=enclosure_conn_h);
+		translate([enclosure_conn_x, enclosure_conn_y0, enclosure_conn_z])
+            cylinder(r1=enclosure_mnt_r_outer, r2=enclosure_mnt_r_outer, h=enclosure_conn_h);
+		translate([enclosure_conn_x0, enclosure_conn_y, enclosure_conn_z])
+            cylinder(r1=enclosure_mnt_r_outer, r2=enclosure_mnt_r_outer, h=enclosure_conn_h);
+		translate([enclosure_conn_x, enclosure_conn_y, enclosure_conn_z])
+            cylinder(r1=enclosure_mnt_r_outer, r2=enclosure_mnt_r_outer, h=enclosure_conn_h);     
+		}
+		union () {
+		translate([enclosure_conn_x0, enclosure_conn_y0, enclosure_conn_z])
+            cylinder(r1=enclosure_mnt_r_inner, r2=enclosure_mnt_r_inner, h=enclosure_conn_h);
+		translate([enclosure_conn_x, enclosure_conn_y0, enclosure_conn_z])
+            cylinder(r1=enclosure_mnt_r_inner, r2=enclosure_mnt_r_inner, h=enclosure_conn_h);
+		translate([enclosure_conn_x0, enclosure_conn_y, enclosure_conn_z])
+            cylinder(r1=enclosure_mnt_r_inner, r2=enclosure_mnt_r_inner, h=enclosure_conn_h);
+		translate([enclosure_conn_x, enclosure_conn_y, enclosure_conn_z])
+            cylinder(r1=enclosure_mnt_r_inner, r2=enclosure_mnt_r_inner, h=enclosure_conn_h);
+		}
+	}
+}
+
+module enclosureConnectL()
+{
+    union () {
+    translate([enclosure_conn_x0, enclosure_conn_y0, enclosure_conn_z])
+        cylinder(r1=enclosure_mnt_r_inner, r2=enclosure_mnt_r_inner, h=enclosure_conn_h);
+    translate([enclosure_conn_x, enclosure_conn_y0, enclosure_conn_z])
+        cylinder(r1=enclosure_mnt_r_inner, r2=enclosure_mnt_r_inner, h=enclosure_conn_h);
+    translate([enclosure_conn_x0, enclosure_conn_y, enclosure_conn_z])
+        cylinder(r1=enclosure_mnt_r_inner, r2=enclosure_mnt_r_inner, h=enclosure_conn_h);
+    translate([enclosure_conn_x, enclosure_conn_y, enclosure_conn_z])
+        cylinder(r1=enclosure_mnt_r_inner, r2=enclosure_mnt_r_inner, h=enclosure_conn_h);     
+    }
+}
+
 switch_d1  = 9;
 switch_d2  = 9;
 switch_dz  = floor + pcb_mnt_height;
@@ -111,40 +155,22 @@ module plugs()
 		rcube(wall+2*fudge, switch_d2, switch_d1, chamfer1);
 }
 
-module pattern_sub() // pattern on rear wall
-{
-//	intersection () {
-//		for ( y = [0 : 1.5 : core_y] ) {
-//			translate([-core_x/2, y - core_y/2, 0]) cube([core_x, 1.5-0.5, 0.2]);
-//		}
-		for ( x = [0 : 1.5 : core_x] ) {
-			translate([x - core_x/2, - core_y/2, 0]) cube([1.5-0.5, core_y, 0.2]);
-		}
-//	}
-}
-
 module shell()
 {
-
 	difference () {
-		union () {
-			difference () {
-				translate([0, 0, 0]) 
-					rcube(core_x+2*wall, core_y+2*wall, core_z+floor+lip_dz, chamfer1);
-				pattern_sub();
-			}
-		}
+        translate([0, 0, 0]) 
+            rcube(core_x+2*wall, core_y+2*wall, core_z+floor+lip_dz, chamfer1);
 		union () {
 			plugs();
 		}
-	}
+    }
 }
 
 module core()
 {
 	union () {
 		translate([wall, wall, floor]) rcube(core_x, core_y, core_z+fudge, chamfer1);
-		translate([wall, wall, floor+core_z]) rcube(core_x+wall, core_y+wall, lip_dz+fudge, 0);
+		translate([wall/2, wall/2, floor+core_z]) rcube(core_x+wall+fudge, core_y+wall+fudge, lip_dz+fudge, 0);
 	}
 }
 
@@ -158,6 +184,7 @@ module lower()
 		    	}
 			pcbMountingHoles();
 	    	}
+        enclosureConnectL();
 	}
 }
 
@@ -171,25 +198,33 @@ lcd_h = 4.0;
 lcd_dy = 34;
 lcd_dx = 43.6;
 
-lcd_mnt_d_inner = 2;
-lcd_mnt_d_outer = 4;
+lcd_mnt_r_inner = 1;
+lcd_mnt_r_outer = 2;
 lcd_mnt_h = 1.5;
-lcd_mnt_z = upper_z+fudge-floor;
+lcd_mnt_z = upper_z+fudge-lcd_mnt_h;
 
 module lcdMountingHoles()
 {
 	difference () {
 		union () {
-		translate([lcd_x-2.3, lcd_y, lcd_mnt_z]) cylinder(r1=lcd_mnt_d_outer/2, r2=lcd_mnt_d_outer/2, h=lcd_mnt_h);
-		translate([lcd_x-2.3, lcd_y+32.2, lcd_mnt_z]) cylinder(r1=lcd_mnt_d_outer/2, r2=lcd_mnt_d_outer/2,  h=lcd_mnt_h);
-		translate([lcd_x+46, lcd_y, lcd_mnt_z]) cylinder(r1=lcd_mnt_d_outer/2, r2=lcd_mnt_d_outer/2,  h=lcd_mnt_h);
-		translate([lcd_x+46, lcd_y+32.2, lcd_mnt_z]) cylinder(r1=lcd_mnt_d_outer/2 ,r2=lcd_mnt_d_outer/2,  h=lcd_mnt_h);
+		translate([lcd_x-2.3, lcd_y, lcd_mnt_z])
+            cylinder(r1=lcd_mnt_r_outer, r2=lcd_mnt_r_outer, h=lcd_mnt_h);
+		translate([lcd_x-2.3, lcd_y+32.2, lcd_mnt_z])
+            cylinder(r1=lcd_mnt_r_outer, r2=lcd_mnt_r_outer,  h=lcd_mnt_h);
+		translate([lcd_x+46, lcd_y, lcd_mnt_z])
+            cylinder(r1=lcd_mnt_r_outer, r2=lcd_mnt_r_outer,  h=lcd_mnt_h);
+		translate([lcd_x+46, lcd_y+32.2, lcd_mnt_z])
+            cylinder(r1=lcd_mnt_r_outer ,r2=lcd_mnt_r_outer,  h=lcd_mnt_h);
 		}
 		union () {
-		translate([lcd_x-2.3, lcd_y, lcd_mnt_z]) cylinder(r1=lcd_mnt_d_inner/2, r2=lcd_mnt_d_inner/2, h=lcd_mnt_h);
-		translate([lcd_x-2.3, lcd_y+32.2, lcd_mnt_z]) cylinder(r1=lcd_mnt_d_inner/2, r2=lcd_mnt_d_inner/2, h=lcd_mnt_h);
-		translate([lcd_x+46, lcd_y, lcd_mnt_z]) cylinder(r1=lcd_mnt_d_inner/2, r2=lcd_mnt_d_inner/2, h=lcd_mnt_h);
-		translate([lcd_x+46, lcd_y+32.2, lcd_mnt_z]) cylinder(r1=lcd_mnt_d_inner/2, r2=lcd_mnt_d_inner/2, h=lcd_mnt_h);
+		translate([lcd_x-2.3, lcd_y, lcd_mnt_z])
+            cylinder(r1=lcd_mnt_r_inner, r2=lcd_mnt_r_inner, h=lcd_mnt_h);
+		translate([lcd_x-2.3, lcd_y+32.2, lcd_mnt_z])
+            cylinder(r1=lcd_mnt_r_inner, r2=lcd_mnt_r_inner, h=lcd_mnt_h);
+		translate([lcd_x+46, lcd_y, lcd_mnt_z])
+            cylinder(r1=lcd_mnt_r_inner, r2=lcd_mnt_r_inner, h=lcd_mnt_h);
+		translate([lcd_x+46, lcd_y+32.2, lcd_mnt_z])
+            cylinder(r1=lcd_mnt_r_inner, r2=lcd_mnt_r_inner, h=lcd_mnt_h);
 		}
 	}
 }
@@ -204,15 +239,17 @@ dht_dx = 15.1;
 dht_mnt_h = 1.5;
 dht_mnt_d_inner = 1;
 dht_mnt_d_outer = 3;
-dht_mnt_x = dht_x + (dht_dy/2);
+dht_mnt_x = dht_x + (dht_dx/2);
 dht_mnt_y = dht_y - (dht_mnt_d_outer/2);
 dht_mnt_z = upper_z+fudge-dht_mnt_h;
 
 module dhtMountingHole()
 {
 	difference () {
-		translate([dht_mnt_x, dht_mnt_y, dht_mnt_z]) cylinder(r1=dht_mnt_d_outer/2, r2=dht_mnt_d_outer/2, h=dht_mnt_h);
-		translate([dht_mnt_x, dht_mnt_y, dht_mnt_z]) cylinder(r1=dht_mnt_d_inner/2, r2=dht_mnt_d_inner/4, h=dht_mnt_h);
+		translate([dht_mnt_x, dht_mnt_y, dht_mnt_z])
+            cylinder(r1=dht_mnt_d_outer/2, r2=dht_mnt_d_outer/2, h=dht_mnt_h);
+		translate([dht_mnt_x, dht_mnt_y, dht_mnt_z])
+            cylinder(r1=dht_mnt_d_inner/2, r2=dht_mnt_d_inner/4, h=dht_mnt_h);
 	}
 }
 
@@ -253,6 +290,7 @@ module upper()
 		}
 		lcdMountingHoles();
 		dhtMountingHole();
+        enclosureConnectH();
 	}
 }
 
