@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import httplib
+import ssl
 import json
 import logging
 import serial
@@ -25,7 +26,7 @@ def api_get(uri, headers=None):
     http_headers = DEFAULT_HEADERS.copy()
     if headers:
         http_headers.update(headers)
-    conn = httplib.HTTPConnection(settings.API_HOST, settings.API_PORT)
+    conn = httplib.HTTPSConnection(settings.API_HOST, settings.API_PORT)
     LOG.info("[API] GET %s", uri)
     conn.request("GET", uri, None, http_headers)
     response = conn.getresponse()
@@ -37,7 +38,7 @@ def api_post(uri, headers=None, body=None):
     http_headers = DEFAULT_HEADERS.copy()
     if headers:
         http_headers.update(headers)
-    conn = httplib.HTTPConnection(settings.API_HOST, settings.API_PORT)
+    conn = httplib.HTTPSConnection(settings.API_HOST, settings.API_PORT)
     if body:
         body = json.dumps(body)
     LOG.info("[API] POST %s", uri)
@@ -61,7 +62,10 @@ def api_get_nodes(controller_id):
     uri = "/api/controllers/%s/nodes" % (controller_id)
     response = api_get(uri)
     if response.status == 200:
-        return json.loads(response.read())
+        try:
+            return json.loads(response.read())
+        except Exception as Error:
+            return []
 
 def api_get_node(controller_id, node_id):
     uri = "/api/controllers/%s/nodes/%s" % (controller_id, node_id)
@@ -197,6 +201,7 @@ def command_id_request(nodeid, sensorid, payload):
     Node is requesting id.
     """
     nodes = api_get_nodes(settings.API_CONTROLLERID)
+
     node_ids = {}
     for node in nodes:
         node_ids[node['node_id']] = True 
@@ -217,8 +222,11 @@ def register_action(msgtype, subtype, func):
         HANDLERS[msgtype][subtype] = []
     HANDLERS[msgtype][subtype].append(func)
 
+# Eventually we will want to add seperate handlers for
+# both relay and arduino node... Though I can't think
+# of how they would be any different
 register_action(mysensors.C_PRESENTATION, \
-        mysensors.S_ARDUINO_NODE, \
+        mysensors.S_ARDUINO_RELAY, \
         command_present_node)
 register_action(mysensors.C_PRESENTATION, \
         mysensors.S_TEMP, \
