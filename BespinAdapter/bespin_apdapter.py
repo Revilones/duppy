@@ -12,6 +12,8 @@ import daemon
 import mysensors
 import settings
 
+ERROR = -1
+SUCCESS = 0
 
 LOG = logging.getLogger("bespin_adapter")
 
@@ -107,7 +109,9 @@ def command_present_node(nodeid, sensorid, payload):
             LOG.info("[API] Created node '%s'", nodeid)
         else:
             LOG.error("[API] Failed to create node '%s'", nodeid)
+            return ERROR
     LOG.info("Node '%s' has connected", nodeid)
+    return SUCCESS
 
 def command_present_temp(nodeid, sensorid, payload):
     """
@@ -210,6 +214,14 @@ def command_id_request(nodeid, sensorid, payload):
         if newNodeId not in node_ids:
             break
 
+    print "Node Id %d" % (newNodeId)
+    error = command_present_node(newNodeId, None, None)
+
+    #This nodeid might have already been taken return none so
+    #node will try again
+    if error is ERROR:
+        return None
+
     LOG.info("Id Request sending id:%d" % newNodeId)
     return encode_command(nodeid, sensorid, mysensors.C_INTERNAL, 0, \
             mysensors.I_ID_RESPONSE, newNodeId)
@@ -222,9 +234,9 @@ def register_action(msgtype, subtype, func):
         HANDLERS[msgtype][subtype] = []
     HANDLERS[msgtype][subtype].append(func)
 
-# Eventually we will want to add seperate handlers for
-# both relay and arduino node... Though I can't think
-# of how they would be any different
+register_action(mysensors.C_PRESENTATION, \
+        mysensors.S_ARDUINO_NODE, \
+        command_present_node)
 register_action(mysensors.C_PRESENTATION, \
         mysensors.S_ARDUINO_RELAY, \
         command_present_node)

@@ -345,6 +345,8 @@ boolean MySensor::process() {
 							eeprom_write_byte((uint8_t*)EEPROM_NODE_ID_ADDRESS, nc.nodeId);
 						}
 						debug(PSTR("id=%d\n"), nc.nodeId);
+						//Reset Microcontroller
+						asm volatile ("  jmp 0");
 					}
 				} else if (type == I_CONFIG) {
 					// Pick up configuration from controller (currently only metric/imperial)
