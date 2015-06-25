@@ -11,7 +11,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)), # admin site
     url(r'^api/', include('api.urls')),
     url(r'', include('webcam.urls')),
-    url(r'docs/', include('rest_framework_swagger.urls')),
     url(r'^api-auth/', include('rest_framework.urls',
             namespace='rest_framework')),
     url(r'^home/', include('home.urls', namespace="home")),
