@@ -28,23 +28,25 @@ def api_get(uri, headers=None):
     http_headers = DEFAULT_HEADERS.copy()
     if headers:
         http_headers.update(headers)
-    conn = httplib.HTTPSConnection(settings.API_HOST, settings.API_PORT)
+    conn = httplib.HTTPConnection(settings.API_HOST, settings.API_PORT)
     LOG.info("[API] GET %s", uri)
     conn.request("GET", uri, None, http_headers)
     response = conn.getresponse()
     LOG.info("[API] Status: %s, Reason: %s", response.status, response.reason)
+    data = response.read()
     conn.close()
-    return response
+    return response, data
 
 def api_post(uri, headers=None, body=None):
     http_headers = DEFAULT_HEADERS.copy()
     if headers:
         http_headers.update(headers)
-    conn = httplib.HTTPSConnection(settings.API_HOST, settings.API_PORT)
+    conn = httplib.HTTPConnection(settings.API_HOST, settings.API_PORT)
     if body:
         body = json.dumps(body)
     LOG.info("[API] POST %s", uri)
     LOG.debug(body)
+    LOG.debug(http_headers)
     conn.request("POST", uri, body, http_headers)
     response = conn.getresponse()
     LOG.info("[API] Status: %s, Reason: %s", response.status, response.reason)
@@ -62,18 +64,18 @@ def upload_data(nodeid, sensorid, payload):
 
 def api_get_nodes(controller_id):
     uri = "/api/controllers/%s/nodes" % (controller_id)
-    response = api_get(uri)
+    response, data = api_get(uri)
     if response.status == 200:
         try:
-            return json.loads(response.read())
+            return json.loads(data)
         except Exception as Error:
             return []
 
 def api_get_node(controller_id, node_id):
     uri = "/api/controllers/%s/nodes/%s" % (controller_id, node_id)
-    response = api_get(uri)
+    response, data = api_get(uri)
     if response.status == 200:
-        return json.loads(response.read())
+        return json.loads(data)
 
 def api_create_node(controller_id, node_id):
     uri = "/api/controllers/%s/nodes" % controller_id
@@ -84,9 +86,9 @@ def api_create_node(controller_id, node_id):
 def api_get_sensor(controller_id, node_id, sensor_id):
     uri = "/api/controllers/%s/nodes/%s/sensors/%s" % \
             (controller_id, node_id, sensor_id)
-    response = api_get(uri)
+    response, data = api_get(uri)
     if response.status == 200:
-        return json.loads(response.read())
+        return json.loads(data)
 
 def api_create_sensor(controller_id, node_id, sensor_id, sensor_type):
     uri = "/api/controllers/%s/nodes/%s/sensors" % (controller_id, node_id)
