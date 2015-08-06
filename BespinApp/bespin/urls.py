@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     url(r'^home/', include('home.urls', namespace="home")),
     url('^$', RedirectView.as_view(pattern_name="home:index",
                                  permanent=False)),
+    url(r'^chart/', include('chart.urls', namespace="chart")),
 )

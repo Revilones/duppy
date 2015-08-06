@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'webcam',
     'home',
     'monitor',
+    'chart',
 )
 
 MIDDLEWARE_CLASSES = (

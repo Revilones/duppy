@@ -1,0 +1,8 @@
+"""
+Chart Settings
+"""
+
+API_HOST = "127.0.0.1"
+API_PORT = 8000
+API_TOKEN = "342f142ebfaee68240d41d1a8e5955bc6e322700"
+API_CONTROLLERID = "9bb5ee60eeffdad37ae82f403cb79f42397e642e"
