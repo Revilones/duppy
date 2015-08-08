@@ -4,8 +4,53 @@
 <div id="container" style="width:100%; height:400px;"></div>
 
 <script>
-$(function () {
-	$.get( "http://localhost:8000/api/data/", function( data ) {
+
+var sensors;
+
+function generateGraph(selectIn)
+{
+  var idx = selectIn.selectedIndex;
+  var sensor = sensors[idx];
+
+  if (idx != 0)
+  {
+    drawGraph(sensor.controller_id, sensor.node_id, sensor.sensor_id);
+  }
+}
+
+function populateSensors(selectIn, selectOut)
+{
+  var idx = selectIn.selectedIndex;
+  var val = selectIn[idx].text;
+  var par = document.forms["sensorType"];
+  var parelmts = par.elements;
+  var sensorType = val;
+
+  if (sensorType != "Select Sensor Type")
+  {
+    $.get("http://192.168.0.106:8000/api/sensors/" + sensorType, 
+      function(data, status){
+            fillSelect(data, selectOut)
+    });
+  }
+}
+
+function fillSelect(jsonReply, selectOut)
+{
+  sensors = jsonReply;
+  var length = sensors.length;
+
+  selectOut.length = length + 1
+
+  for (i= 0; i < length; i++)
+  {
+    selectOut[i+1].text = (sensors[i].name);
+  }
+}
+
+function drawGraph(controller, node, sensor) {
+	$.get( "http://192.168.0.106:8000/api/controllers/" + controller + "/nodes/" + node + "/sensors/" +
+            sensor + "/data/", function( data ) {
 
 		var dataset = [];
 
@@ -78,5 +123,22 @@ $(function () {
 			}]
 		});
 	});
-});
+}
 </script>
+
+<form name="sensorType">
+<p>
+    <select name="Sensor Type" onChange="populateSensors(this, Sensor);">
+        <option>Select Sensor Type</option>
+        <option>co2</option>
+        <option>temperature</option>
+        <option>humidity</option>
+    </select>
+
+    <select name="Sensor" onChange="generateGraph(this);">
+        <option>Select Sensor</option>
+    </select>
+</p>
+</form>
+
+

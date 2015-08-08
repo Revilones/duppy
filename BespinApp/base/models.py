@@ -113,6 +113,7 @@ class DataManager(models.Manager):
 
 class Data(models.Model):
     # fields
+    controller = models.ForeignKey(Controller)
     sensor = models.ForeignKey(Sensor)
     payload = models.TextField()
     created = models.DateTimeField(auto_now_add=True)

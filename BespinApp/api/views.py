@@ -18,25 +18,6 @@ from .models import Controller, Data, Node, Sensor
 from .serializers import ControllerSerializer, DataSerializer, \
                          NodeSerializer, SensorSerializer
 
-#class DatumList(generics.ListCreateAPIView):
-#    authentication_classes = (TokenAuthentication,SessionAuthentication)
-#    queryset = Datum.objects.all()
-#    serializer_class = DatumSerializer
-#
-#    @method_decorator(csrf_exempt)
-#    def dispatch(self, *args, **kwargs):
-#        return super(DatumList, self).dispatch(*args, **kwargs)
-#
-##@csrf_exempt
-#class DatumDetail(generics.RetrieveUpdateDestroyAPIView):
-#    authentication_classes = (TokenAuthentication,SessionAuthentication)
-#    queryset = Datum.objects.all()
-#    serializer_class = DatumSerializer
-#
-#    @method_decorator(csrf_exempt)
-#    def dispatch(self, *args, **kwargs):
-#        return super(DatumDetail, self).dispatch(*args, **kwargs)
-
 class ControllerView(APIView):
     """
     API Controller View
@@ -144,12 +125,12 @@ class DataView(APIView):
                 sensor_id=obj.get("sensor_id"))
 
         data = models.Data(
+                controller=controller,
                 sensor=sensor,
                 payload=obj.get("payload"))
         data.save()
 
         return Response(status=status.HTTP_201_CREATED)
-
 
 class NodeView(APIView):
     """
@@ -273,8 +254,6 @@ class SensorView(APIView):
         latest_data = data.payload if data else None
         last_update = data.created if data else None
 
-
-
         response = Sensor(
                 controller_id=controller.controller_id,
                 node_id=node.node_id,
@@ -370,3 +349,74 @@ class SensorSetView(APIView):
                                              node.node_id,
                                              sensor.sensor_id])}
         return Response(status=status.HTTP_201_CREATED, headers=headers)
+
+class SensorSetTypeView(APIView):
+    """
+    API Sensor Type View
+    """
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(SensorSetTypeView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, sensor_type):
+
+        sensors = models.Sensor.objects.filter(sensor_type=sensor_type)
+        #sensors = models.Sensor.objects.all()
+
+        response = [Sensor(
+                        controller_id=sensor.node.controller.controller_id,
+                        node_id=sensor.node.node_id,
+                        sensor_id=sensor.sensor_id,
+                        sensor_type=sensor.sensor_type,
+                        name=sensor.name,
+                        latest_data=sensor.data_set.latest("created").payload,
+                        last_update=sensor.data_set.latest("created").created)
+                    for sensor in sensors]
+
+        serializer = SensorSerializer(response, many=True)
+        return Response(serializer.data)
+
+class SensorDataView(APIView):
+    """
+    API Sensor Data View
+    """
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(SensorDataView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, controller_id, node_id, sensor_id):
+        response = []
+
+        controller = get_object_or_404(models.Controller,
+                user=request.user,
+                controller_id=controller_id)
+
+        node = get_object_or_404(models.Node,
+                controller=controller,
+                node_id=node_id)
+
+        sensor = get_object_or_404(models.Sensor,
+                node=node,
+                sensor_id=sensor_id)
+
+        #Eventually we will use the following call for range
+        #end = sensor.data_set.latest().created
+        #begin  = end - timedelta(minutes=monitor.notice_range)
+        #data = sensor.data_set.filter(created__range=[begin,end])  
+        for data in sensor.data_set.all():
+            response.append(Data(
+                    controller_id=data.sensor.node.controller.controller_id,
+                    node_id=data.sensor.node.node_id,
+                    sensor_id=data.sensor.sensor_id,
+                    payload=data.payload,
+                    created=data.created))
+
+        serializer = DataSerializer(response, many=True)
+        return Response(serializer.data)
+

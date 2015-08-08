@@ -3,7 +3,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
 urlpatterns = [
-    url(r'data/?$', views.DataView.as_view()),
+    #url(r'data/?$', views.DataView.as_view()),
 
     url(r'controllers/?$',
             views.ControllerSetView.as_view(),
@@ -25,7 +25,12 @@ urlpatterns = [
     url(r'controllers/(?P<controller_id>[a-zA-Z0-9]+)/nodes/(?P<node_id>[0-9]+)/sensors/(?P<sensor_id>[0-9]+)/?$',
             views.SensorView.as_view(),
             name="api-sensor-view"),
-    #url(r'data/(?P<pk>[0-9]+)$', views.DatumDetail.as_view())
+    url(r'sensors/(?P<sensor_type>[a-zA-Z0-9]+)?$',
+            views.SensorSetTypeView.as_view(),
+            name="api-sensor-set-type-view"),
+    url(r'controllers/(?P<controller_id>[a-zA-Z0-9]+)/nodes/(?P<node_id>[0-9]+)/sensors/(?P<sensor_id>[0-9]+)/data/?$',
+            views.SensorDataView.as_view(),
+            name="api-sensor-data-view"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
