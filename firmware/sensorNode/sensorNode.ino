@@ -1,13 +1,16 @@
 #define _Digole_Serial_I2C_
 
-#include <bespinTypes.h>
 #include <PinChangeInt.h>
+#include <EEPROM.h>
+#include <SPI.h>
+#include <Wire.h>
+
+#include <bespinTypes.h>
 #include <kSeries.h>
 #include <MySensor.h>
-#include <SPI.h>
 #include <DHT.h>
 #include <DigoleSerial.h>
-#include <Wire.h>
+
 #include "bespinSensor.h"
 
 #define CHILD_ID_HUM 0
@@ -29,6 +32,8 @@
 #define READINGS      0
 #define SENSOR_ID     1
 #define DISPLAY_OFF   2
+#define RESET         3 
+#define END_OF_LIST   3
 
 DigoleSerialDisp mydisp(&Wire,'\x27');
 MySensor gw;
@@ -129,25 +134,26 @@ int getButtonPress()
 void changeCursor(int prevCursor, int cursor)
 {
     mydisp.setMode('~');
-    mydisp.drawBox(0, 40*prevCursor, 160, 30);
-    mydisp.drawBox(0, 40*cursor, 160, 30);
+    mydisp.drawBox(0, 30*prevCursor, 160, 30);
+    mydisp.drawBox(0, 30*cursor, 160, 30);
+}
+
+void printMenuItem(char *item)
+{
+    mydisp.setFont(51);
+    mydisp.print(item);
+    mydisp.nextTextLine();
+    mydisp.setFont(10);
+    mydisp.nextTextLine();
 }
 
 void displayMenu()
 {
     mydisp.setPrintPos(0, 1, _TEXT_);
-    mydisp.setFont(51);
-    mydisp.print("Readings");
-    mydisp.nextTextLine();
-    mydisp.setFont(18);
-    mydisp.nextTextLine();
-    mydisp.setFont(51);
-    mydisp.print("Sensor ID");
-    mydisp.nextTextLine();
-    mydisp.setFont(18);
-    mydisp.nextTextLine();
-    mydisp.setFont(51);
-    mydisp.print("Display Off");
+    printMenuItem("Readings");
+    printMenuItem("Sensor ID");
+    printMenuItem("Display Off");
+    printMenuItem("Reset");
 
     mydisp.setMode('~');
     mydisp.drawBox(0, 0, 160, 30);
@@ -213,7 +219,7 @@ void displayReadings()
         }
     }
 }
-    
+
 void displaySensorId()
 {
     int button = NO_BUTTON;
@@ -238,6 +244,13 @@ void displaySensorId()
     return;
 }
 
+void clearEEPROM()
+{
+    for (int i=0;i<512;i++) {
+        EEPROM.write(i, 0xff);
+    }
+}
+    
 void menu()
 {
     int button = NO_BUTTON;
@@ -273,7 +286,7 @@ void menu()
                     }
                     break;
                 case BUTTON_DOWN:
-                    if (cursor < 2)
+                    if (cursor < END_OF_LIST)
                     {
                         prevCursor = cursor;
                         cursor++;
@@ -295,6 +308,11 @@ void menu()
                         case DISPLAY_OFF:
                             mydisp.setBackLight(0);
                             displayReadings();
+                            break;
+                        case RESET:
+                            clearEEPROM();
+						    //Reset Microcontroller
+						    asm volatile ("  jmp 0");
                             break;
                         default:
                             break;
