@@ -5,14 +5,14 @@
 
 <script>
 
-var sensors;
+var gSensors;
 
 function generateGraph(selectIn)
 {
   var idx = selectIn.selectedIndex;
-  var sensor = sensors[idx];
+  var sensor = gSensors[idx-1];
 
-  if (idx != 0)
+  if (typeof sensor != "undefined")
   {
     drawGraph(sensor.controller_id, sensor.node_id, sensor.sensor_id);
   }
@@ -33,18 +33,20 @@ function populateSensors(selectIn, selectOut)
             fillSelect(data, selectOut)
     });
   }
+
+  selectOut.selectedIndex = 0;
 }
 
 function fillSelect(jsonReply, selectOut)
 {
-  sensors = jsonReply;
-  var length = sensors.length;
+  gSensors = jsonReply;
+  var length = gSensors.length;
 
   selectOut.length = length + 1
 
   for (i= 0; i < length; i++)
   {
-    selectOut[i+1].text = (sensors[i].name);
+    selectOut[i+1].text = (gSensors[i].name);
   }
 }
 

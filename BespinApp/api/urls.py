@@ -3,8 +3,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
 urlpatterns = [
-    #url(r'data/?$', views.DataView.as_view()),
-
+    #This is interfering with SensorDataView... Why?
     url(r'controllers/?$',
             views.ControllerSetView.as_view(),
             name="api-controller-set-view"),
@@ -31,6 +30,10 @@ urlpatterns = [
     url(r'controllers/(?P<controller_id>[a-zA-Z0-9]+)/nodes/(?P<node_id>[0-9]+)/sensors/(?P<sensor_id>[0-9]+)/data/?$',
             views.SensorDataView.as_view(),
             name="api-sensor-data-view"),
+
+    url(r'data/?$',
+            views.DataView.as_view(),
+            name="api-data-view"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
