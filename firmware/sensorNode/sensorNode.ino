@@ -35,6 +35,8 @@
 #define RESET         3 
 #define END_OF_LIST   3
 
+#define SENSOR_INTERVAL 60000 //Delay between sensor readings
+
 DigoleSerialDisp mydisp(&Wire,'\x27');
 MySensor gw;
 DHT gDHT;
@@ -170,12 +172,12 @@ void displayReadings()
 
     while(1)
     {
-        error = readHumidity(gDHT, &fHumidity);
+        error = readHumidity(&gDHT, &fHumidity);
         if (error == SUCCESS) {
             gw.send(msgHum.set(fHumidity, 1));
         }
         
-        error = readTemperature(gDHT, metric, &temperature);
+        error = readTemperature(&gDHT, metric, &temperature);
         if (error == SUCCESS) {
             gw.send(msgTemp.set(temperature, 1));
         }
@@ -207,7 +209,7 @@ void displayReadings()
         mydisp.print(co2);
     
         now = millis();
-        while((now + 10000) > millis())
+        while((now + SENSOR_INTERVAL) > millis())
         {
             gw.process();
             button = getButtonPress();

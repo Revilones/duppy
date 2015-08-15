@@ -1,12 +1,12 @@
 
 #include "bespinSensor.h"
 
-int readHumidity(DHT dht, float *Humidity)
+int readHumidity(DHT *dht, float *Humidity)
 {
     int error = SUCCESS;
     float humidity = 0;
     
-    humidity = dht.getHumidity();
+    humidity = dht->getHumidity();
     if (isnan(humidity)) {
       Serial.println("Humidity Error");
       error = ERROR_INTERNAL;
@@ -24,21 +24,18 @@ error:
     goto cleanup;
 }
 
-int readTemperature(DHT dht, bool isMetric, float *Temperature)
+int readTemperature(DHT *dht, bool isMetric, float *Temperature)
 {
     int error = SUCCESS;
     float temperature = 0;
     
-    temperature = dht.getTemperature();
+    temperature = dht->getTemperature();
     if (isnan(temperature)) {
         Serial.println("Temperature Error");
         error = ERROR_INTERNAL;
         goto error;
-    } else {
-	    if(isMetric == true)
-	    {
-            temperature = dht.toFahrenheit(temperature);
-	    }
+    } else if(isMetric != true) {
+        temperature = dht->toFahrenheit(temperature);
     }
     
     *Temperature = temperature;
