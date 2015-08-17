@@ -1,105 +1,46 @@
-#!/usr/bin/env python
-import argparse
-import httplib
-import ssl
-import json
-# import logging
-# import serial
-# import time
-import os
+# copy&paste into shell started with "python manage.py shell"
+# requires a controller named "testcontroller" in database
 
-# import datetime
-# from django.utils import timezone
+import datetime
 
-import settings
-from time import sleep
+from django.utils import timezone
 from random import randrange
 
-ERROR = -1
-SUCCESS = 0
+from base.models import Controller, Node, Sensor, Data
 
-# LOG = logging.getLogger("bespin_adapter")
+TIMELENGTH = 48    # number of data points per sensor (1 per hour)
+S_ID = 1
 
-###############################################################################
-# Bespin Cloud API
-###############################################################################
-DEFAULT_HEADERS = {"Content-type": "application/json",
-                   "Accept": "application/json",
-                   "Authorization": "Token %s" % settings.API_TOKEN}
+controller = Controller.objects.get(name="testcontroller")
 
-# def api_get(uri, headers=None):
-#     http_headers = DEFAULT_HEADERS.copy()
-#     if headers:
-#         http_headers.update(headers)
-#     conn = httplib.HTTPSConnection(settings.API_HOST, settings.API_PORT)
-#     conn.request("GET", uri, None, http_headers)
-#     response = conn.getresponse()
-#     conn.close()
-#     return response
+# delete previous data
+try:
+    Node.objects.get(controller=controller).delete()
+except:
+    pass
 
-def api_post(uri, headers=None, body=None):
-    http_headers = DEFAULT_HEADERS.copy()
-    if headers:
-        http_headers.update(headers)
-    conn = httplib.HTTPConnection(settings.API_HOST, settings.API_PORT)
-    if body:
-        body = json.dumps(body)
-    conn.request("POST", uri, body, http_headers)
-    response = conn.getresponse()
-    conn.close()
-    return response
+node = controller.node_set.create(node_id=1, name="node1")
 
-def upload_data(nodeid, sensorid, payload):
-    uri = "/api/data"
-    body = {"controller_id": settings.API_CONTROLLERID,
-            "node_id": int(nodeid),
-            "sensor_id": int(sensorid),
-            "payload": payload}
-    response = api_post(uri, body=body)
-    return response.read()
+def create_sensor_data(s_type, start_val, variation, accuracy):
+    global S_ID
+    sensor = node.sensor_set.create(
+        sensor_id = S_ID, 
+        name = "sensor_"+s_type[:3]+"_"+str(S_ID), 
+        sensor_type = s_type
+    )
+    S_ID += 1
+    payload = start_val
+    for i in range(TIMELENGTH):
+        last_payload = payload
+        payload = last_payload + accuracy * randrange(-variation, variation+1)
+        data = sensor.data_set.create(controller=controller, payload=str(payload))
+        data.created = timezone.now() - datetime.timedelta(hours=i)
+        data.save()
 
-# def api_get_nodes(controller_id):
-#     uri = "/api/controllers/%s/nodes" % (controller_id)
-#     response = api_get(uri)
-#     if response.status == 200:
-#         try:
-#             return json.loads(response.read())
-#         except Exception as Error:
-#             return []
+create_sensor_data("co2", 400, 30, 1)
+create_sensor_data("co2", 400, 30, 1)
+create_sensor_data("co2", 400, 30, 1)
+create_sensor_data("humidity", 50, 10, .1)
+create_sensor_data("temperature", 25.0, 20, .1)
 
-# def api_get_node(controller_id, node_id):
-#     uri = "/api/controllers/%s/nodes/%s" % (controller_id, node_id)
-#     response = api_get(uri)
-#     if response.status == 200:
-#         return json.loads(response.read())
-
-# def api_create_node(controller_id, node_id):
-#     uri = "/api/controllers/%s/nodes" % controller_id
-#     body = {"node_id": int(node_id)}
-#     response = api_post(uri, body=body)
-#     return response.status is 201
-
-# def api_get_sensor(controller_id, node_id, sensor_id):
-#     uri = "/api/controllers/%s/nodes/%s/sensors/%s" % \
-#             (controller_id, node_id, sensor_id)
-#     response = api_get(uri)
-#     if response.status == 200:
-#         return json.loads(response.read())
-
-# def api_create_sensor(controller_id, node_id, sensor_id, sensor_type):
-#     uri = "/api/controllers/%s/nodes/%s/sensors" % (controller_id, node_id)
-#     body = {"sensor_id": int(sensor_id),
-#             "sensor_type": sensor_type}
-#     response = api_post(uri, body=body)
-#     return response.status is 201
-
-def main():
-    # args = parse_args()
-
-    for i in range(30):
-        upload_data(1, 1, randrange(20, 25))
-        sleep(1)
-
-
-if __name__ == "__main__":
-    main()
+print("Done.")
