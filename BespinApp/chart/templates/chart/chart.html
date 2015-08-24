@@ -7,14 +7,36 @@
 
 var gSensors;
 
-function generateGraph(selectIn)
+// function generateGraph(selectIn)
+// {
+//   var idx = selectIn.selectedIndex;
+//   var sensor = gSensors[idx-1];
+
+//   if (typeof sensor != "undefined")
+//   {
+//     drawGraph(sensor.controller_id, sensor.node_id, sensor.sensor_id)
+// ;  }
+// }
+
+function addToGraph(selectIn)
 {
   var idx = selectIn.selectedIndex;
   var sensor = gSensors[idx-1];
-
   if (typeof sensor != "undefined")
   {
-    drawGraph(sensor.controller_id, sensor.node_id, sensor.sensor_id);
+    addSensor(sensor.controller_id, sensor.node_id, sensor.sensor_id)
+;  }
+}   
+
+function addMultipleToGraph()
+{
+  for (i in gSensors)
+  {
+    sensor = gSensors[i];
+    if (typeof sensor != "undefined")
+    {
+      addSensor(sensor.controller_id, sensor.node_id, sensor.sensor_id);
+    }
   }
 }
 
@@ -25,10 +47,8 @@ function populateSensors(selectIn, selectOut)
   var par = document.forms["sensorType"];
   var parelmts = par.elements;
   var sensorType = val;
-
-  if (sensorType != "Select Sensor Type")
   {
-    $.get("http://192.168.0.106:8000/api/sensors/" + sensorType, 
+    $.get("http://localhost:8000/api/sensors/" + sensorType, 
       function(data, status){
             fillSelect(data, selectOut)
     });
@@ -50,82 +70,103 @@ function fillSelect(jsonReply, selectOut)
   }
 }
 
-function drawGraph(controller, node, sensor) {
-	$.get( "http://192.168.0.106:8000/api/controllers/" + controller + "/nodes/" + node + "/sensors/" +
-            sensor + "/data/", function( data ) {
-
-		var dataset = [];
-
-		// format data for Highcharts
-		$.each(data, function(key, value) {
-			var date = new Date(value.created);
-			dataset.push([date.getTime(), parseFloat(value.payload)]);
-		});
-
-		// display times in local timezone
-		Highcharts.setOptions({
-			global: {
-				useUTC: false
-			}
-		})
-
-		$('#container').highcharts({
-			chart: {
-				zoomType: 'x'
-			},
-			title: {
-				text: 'Payload over Time'
-			},
-			subtitle: {
-				text: document.ontouchstart === undefined ?
-						'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-			},
-			xAxis: {
-				type: 'datetime'
-			},
-			yAxis: {
-				title: {
-					text: 'Payload'
-				}
-			},
-			legend: {
-				enabled: false
-			},
-			plotOptions: {
-				area: {
-					fillColor: {
-						linearGradient: {
-							x1: 0,
-							y1: 0,
-							x2: 0,
-							y2: 1
-						},
-						stops: [
-							[0, Highcharts.getOptions().colors[0]],
-							[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-						]
-					},
-					marker: {
-						radius: 2
-					},
-					lineWidth: 1,
-					states: {
-						hover: {
-							lineWidth: 1
-						}
-					},
-					threshold: null
-				}
-			},
-
-			series: [{
-				type: 'area',
-				name: 'Payload over Time',
-				data: dataset
-			}]
-		});
-	});
+function formatData(serializer_data) {
+    formatted_data = [];
+    $.each(serializer_data, function(key, value) {
+        var date = new Date(value.created);
+        formatted_data.push([date.getTime(), parseFloat(value.payload)]);
+    }); 
+    return formatted_data;
 }
+
+function addSensor(controller, node, sensor) {
+    var chart = $('#container').highcharts();
+
+    $.getJSON( "http://localhost:8000/api/controllers/" + controller + "/nodes/" + node + "/sensors/" +
+            sensor, function( sensorInfo ) {
+
+        // check to avoid adding a series multiple times
+        if (chart.get(sensorInfo["sensor_id"])) return;
+
+        $.getJSON( "http://localhost:8000/api/controllers/" + controller + "/nodes/" + node + "/sensors/" +
+            sensor + "/data/", function( data ) {
+            var formatted_data = formatData(data);
+
+            chart.addSeries({
+                yAxis: sensorInfo["sensor_type"],
+                name: sensorInfo["name"],
+                id: sensorInfo["sensor_id"],
+                data: formatted_data,
+            });
+        }); 
+    });
+}
+
+// set initial chart options
+function initializeGraph() {
+    // display times in local timezone
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    })
+
+    $('#container').highcharts({
+        xAxis: {
+            type: 'datetime'
+        },
+
+        yAxis: [{
+            title: {
+                text: "CO2 ppm"
+            },
+            id: "co2",
+            opposite: false,
+        }, {
+            title: {
+                text: "Temperature °C"
+            },
+            id: "temperature",
+            opposite: true,
+        }, {    
+            title: {
+                text: "Humidity %"
+            },
+            id: "humidity",
+            opposite: true,         
+        }],
+
+        plotOptions: {
+            series: {
+                marker: {
+                    enabled: false
+                },
+                lineWidth: 3
+            }
+        },
+    });
+}
+
+$(function () {
+    $('#buttonGraph').click(function () {
+        if (document.forms["sensorType"]["Sensor"].value == "Add Sensor") {
+            addMultipleToGraph();
+        } else {
+            addToGraph(document.forms["sensorType"]["Sensor"]);
+        }
+    });
+});
+
+$(function () {
+    $('#buttonClear').click(function () {
+        initializeGraph();
+    });
+});
+
+$(function () {
+    initializeGraph();
+});
+
 </script>
 
 <form name="sensorType">
@@ -137,10 +178,11 @@ function drawGraph(controller, node, sensor) {
         <option>humidity</option>
     </select>
 
-    <select name="Sensor" onChange="generateGraph(this);">
-        <option>Select Sensor</option>
+    <select name="Sensor">  
+        <option>Add Sensor</option>
     </select>
 </p>
 </form>
 
-
+<button id="buttonGraph" class="autocompare">Graph</button>
+<button id="buttonClear" class="autocompare">Clear</button>
