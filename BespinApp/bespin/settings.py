@@ -131,14 +131,15 @@ SUIT_CONFIG = {
     )
 }
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.request',
-    'django.contrib.auth.context_processors.auth',
-)
-
 TEMPLATES = [{
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR)],
-        'APP_DIRS': True,
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'DIRS': [os.path.join(BASE_DIR)],
+    'APP_DIRS': True,
+    'OPTIONS': {
+        'context_processors': [
+            'django.core.context_processors.request',
+            'django.contrib.auth.context_processors.auth',
+        ],
+    },
 }]
 
