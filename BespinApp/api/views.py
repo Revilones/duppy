@@ -13,6 +13,8 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 
+import datetime
+
 from base import models
 from .models import Controller, Data, Node, Sensor
 from .serializers import ControllerSerializer, DataSerializer, \
@@ -410,6 +412,47 @@ class SensorDataView(APIView):
         #begin  = end - timedelta(minutes=monitor.notice_range)
         #data = sensor.data_set.filter(created__range=[begin,end])  
         for data in sensor.data_set.all():
+            response.append(Data(
+                    controller_id=data.sensor.node.controller.controller_id,
+                    node_id=data.sensor.node.node_id,
+                    sensor_id=data.sensor.sensor_id,
+                    payload=data.payload,
+                    created=data.created))
+
+        serializer = DataSerializer(response, many=True)
+        return Response(serializer.data)
+
+class SensorDataDateView(APIView):
+    """
+    API Sensor Data View With Date Range
+    """
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(SensorDataDateView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, controller_id, node_id, sensor_id, beginSec, endSec):
+        response = []
+
+        controller = get_object_or_404(models.Controller,
+                user=request.user,
+                controller_id=controller_id)
+
+        node = get_object_or_404(models.Node,
+                controller=controller,
+                node_id=node_id)
+
+        sensor = get_object_or_404(models.Sensor,
+                node=node,
+                sensor_id=sensor_id)
+
+        begin = datetime.datetime.fromtimestamp(int(beginSec))
+        end = datetime.datetime.fromtimestamp(int(endSec)) + datetime.timedelta(days=1)
+        data_set = sensor.data_set.filter(created__range=[begin,end])
+ 
+        for data in data_set:
             response.append(Data(
                     controller_id=data.sensor.node.controller.controller_id,
                     node_id=data.sensor.node.node_id,

@@ -8,7 +8,7 @@ from random import randrange
 
 from base.models import Controller, Node, Sensor, Data
 
-TIMELENGTH = 48    # number of data points per sensor (1 per hour)
+TIMELENGTH = 100    # number of data points per sensor (1 per hour)
 S_ID = 1
 
 controller = Controller.objects.get(name="testcontroller")
@@ -41,6 +41,8 @@ create_sensor_data("co2", 400, 30, 1)
 create_sensor_data("co2", 400, 30, 1)
 create_sensor_data("co2", 400, 30, 1)
 create_sensor_data("humidity", 50, 10, .1)
+create_sensor_data("humidity", 50, 10, .1)
+create_sensor_data("temperature", 25.0, 20, .1)
 create_sensor_data("temperature", 25.0, 20, .1)
 
 print("Done.")

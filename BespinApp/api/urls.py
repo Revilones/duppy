@@ -30,6 +30,9 @@ urlpatterns = [
     url(r'controllers/(?P<controller_id>[a-zA-Z0-9]+)/nodes/(?P<node_id>[0-9]+)/sensors/(?P<sensor_id>[0-9]+)/data/?$',
             views.SensorDataView.as_view(),
             name="api-sensor-data-view"),
+    url(r'controllers/(?P<controller_id>[a-zA-Z0-9]+)/nodes/(?P<node_id>[0-9]+)/sensors/(?P<sensor_id>[0-9]+)/data/(?P<beginSec>[0-9]+)&(?P<endSec>[0-9]+)/?$',
+            views.SensorDataDateView.as_view(),
+            name="api-sensor-data-date-view"),
 
     url(r'data/?$',
             views.DataView.as_view(),
