@@ -6,7 +6,7 @@
 <script src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-<link rel="stylesheet" type="text/css" href="/../static/css/bootstrap.css" />
+<!-- <link rel="stylesheet" type="text/css" href="/../static/css/bootstrap.css" /> -->
 
 <script>
 
@@ -165,30 +165,32 @@ $(document).ready(function() {
 <body>
   <br>
 
-  <div id="chart" style="width:100%; height:400px;"></div>
+  <div id="chart" align="center" style="width:95%; height:60%; margin:auto; padding-top: 50px;"></div>
 
-  <form name="dateRange">
+  <div id="chartControls" style="margin-left:3%;">
+    <form name="dateRange">
+      <p>
+        <input type="text" name="Date Range"/>
+      </p>
+    </form>
+
+    <form name="sensorType">
+      <p>
+        <select name="Sensor Type" onChange="populateSensors(this, Sensor);">
+          <option>Select Sensor Type</option>
+          <option>co2</option>
+          <option>temperature</option>
+          <option>humidity</option>
+        </select>
+
+        <select name="Sensor" onChange="addToGraph(this);">  
+          <option>Add Sensor</option>
+        </select>
+      </p>
+    </form>
+
     <p>
-      <input type="text" name="Date Range"/>
+      <button id="buttonClear" onclick="initializeGraph();">Clear</button>
     </p>
-  </form>
-
-  <form name="sensorType">
-    <p>
-      <select name="Sensor Type" onChange="populateSensors(this, Sensor);">
-        <option>Select Sensor Type</option>
-        <option>co2</option>
-        <option>temperature</option>
-        <option>humidity</option>
-      </select>
-
-      <select name="Sensor" onChange="addToGraph(this);">  
-        <option>Add Sensor</option>
-      </select>
-    </p>
-  </form>
-
-  <p>
-    <button id="buttonClear" onclick="initializeGraph();">Clear</button>
-  </p>
+  </div>
 </body>
