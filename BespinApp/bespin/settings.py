@@ -104,9 +104,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-
 STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, "..", "www", "static")
 STATIC_ROOT = '/var/www/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
@@ -132,3 +130,15 @@ SUIT_CONFIG = {
         #{'app': 'auth', 'models': ('user', 'group')},
     )
 }
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.request',
+    'django.contrib.auth.context_processors.auth',
+)
+
+TEMPLATES = [{
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR)],
+        'APP_DIRS': True,
+}]
+
