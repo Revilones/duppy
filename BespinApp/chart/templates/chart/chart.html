@@ -72,7 +72,7 @@ function addSensor(controller, node, sensor, dateRange) {
       sensor, function( sensorInfo ) {
 
     // check to avoid adding a series multiple times
-    if (chart.get(sensorInfo["sensor_id"])) return;
+    if (chart.get(sensorInfo["node_id"] + "." + sensorInfo["sensor_id"])) return;
 
     $.getJSON( "http://localhost:8000/api/controllers/" + controller + "/nodes/" + node + "/sensors/" +
       sensor + "/data/" + dateRange, function( data ) {
@@ -81,7 +81,7 @@ function addSensor(controller, node, sensor, dateRange) {
       chart.addSeries({
         yAxis: sensorInfo["sensor_type"],
         name: sensorInfo["name"],
-        id: sensorInfo["sensor_id"],
+        id: sensorInfo["node_id"] + "." + sensorInfo["sensor_id"],
         data: series,
       });
     }); 
