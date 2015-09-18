@@ -14,6 +14,7 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 
 import datetime
+import json
 
 from base import models
 from .models import Controller, Data, Node, Sensor
@@ -352,9 +353,33 @@ class SensorSetView(APIView):
                                              sensor.sensor_id])}
         return Response(status=status.HTTP_201_CREATED, headers=headers)
 
-class SensorSetTypeView(APIView):
+class SensorTypeView(APIView):
     """
     API Sensor Type View
+    """
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(SensorTypeView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, controller_id):
+        controller = get_object_or_404(models.Controller,
+                user=request.user,
+                controller_id=controller_id)
+
+        sensorTypes = models.Sensor.objects \
+            .filter(node__controller=controller) \
+            .values("sensor_type").distinct()
+
+        data = json.dumps(list(sensorTypes))
+
+        return Response(data)
+
+class SensorSetTypeView(APIView):
+    """
+    API Sensor Set Type View
     """
 
     authentication_classes = (TokenAuthentication, SessionAuthentication)
