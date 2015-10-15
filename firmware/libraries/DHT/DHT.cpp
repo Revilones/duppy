@@ -28,9 +28,6 @@
 
 #include "DHT.h"
 
-
-static unsigned long lastReadTime;
-
 void DHT::setup(uint8_t pin, DHT_MODEL_t model)
 {
   DHT::pin = pin;
@@ -50,19 +47,19 @@ void DHT::setup(uint8_t pin, DHT_MODEL_t model)
 
 void DHT::resetTimer()
 {
-  lastReadTime = millis() - 3000;
+  DHT::lastReadTime = millis() - 3000;
 }
 
 float DHT::getHumidity()
 {
   readSensor();
-  return this->humidity;
+  return humidity;
 }
 
 float DHT::getTemperature()
 {
   readSensor();
-  return this->temperature;
+  return temperature;
 }
 
 #ifndef OPTIMIZE_SRAM_SIZE
@@ -122,8 +119,8 @@ void DHT::readSensor()
   }
   lastReadTime = startTime;
 
-  this->temperature = NAN;
-  this->humidity = NAN;
+  temperature = NAN;
+  humidity = NAN;
 
   // Request sample
 
@@ -145,9 +142,9 @@ void DHT::readSensor()
   // - Then 40 bits: RISING and then a FALLING edge per bit
   // To keep our code simple, we accept any HIGH or LOW reading if it's max 85 usecs long
 
-  word rawHumidity;
-  word rawTemperature;
-  word data;
+  word rawHumidity = 0;
+  word rawTemperature = 0;
+  word data = 0;
 
   for ( int8_t i = -3 ; i < 2 * 40; i++ ) {
     byte age;
@@ -193,16 +190,16 @@ void DHT::readSensor()
   // Store readings
 
   if ( model == DHT11 ) {
-    this->humidity = rawHumidity >> 8;
-    this->temperature = rawTemperature >> 8;
+    humidity = rawHumidity >> 8;
+    temperature = rawTemperature >> 8;
   }
   else {
-    this->humidity = rawHumidity * 0.1;
+    humidity = rawHumidity * 0.1;
 
     if ( rawTemperature & 0x8000 ) {
       rawTemperature = -(int16_t)(rawTemperature & 0x7FFF);
     }
-    this->temperature = ((int16_t)rawTemperature) * 0.1;
+    temperature = ((int16_t)rawTemperature) * 0.1;
   }
 
   error = ERROR_NONE;
