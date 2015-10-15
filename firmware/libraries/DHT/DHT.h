@@ -90,6 +90,7 @@ protected:
 private:
   DHT_MODEL_t model;
   DHT_ERROR_t error;
+  unsigned long lastReadTime;
 };
 
 #endif /*dht_h*/
