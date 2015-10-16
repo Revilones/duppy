@@ -1,6 +1,8 @@
 #define _Digole_Serial_I2C_
 
+#ifndef __PIC32MX__
 #include <PinChangeInt.h>
+#endif
 #include <EEPROM.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -104,7 +106,7 @@ void displaySensorId()
     mydisp.setPrintPos(1, 4, _TEXT_);
     mydisp.setFont(51);
     mydisp.print("Sensor ID ");
-    mydisp.print(gw.nc.nodeId);
+    mydisp.print(gw.getNodeId());
 
     now = millis();
     while((now + 20000) > millis())
@@ -136,7 +138,7 @@ void clearEEPROM()
 void resetNode()
 {
     clearEEPROM();
-    asm volatile ("  jmp 0");
+    hw_reboot();
 }
 
 void setup()
@@ -163,10 +165,8 @@ void setup()
     gDHT.setup(HUMIDITY_SENSOR_DIGITAL_PIN); 
 
     //Initialize Gateway 
-    gw.begin(NULL, AUTO, true/*Repeater Mode*/, AUTO, RF24_PA_LEVEL, RF24_CHANNEL, RF24_DATARATE);
+    gw.begin(NULL, AUTO/*Node Id*/, true/*Repeater Mode*/, AUTO/*Parent Node Id*/);
 
-    gw.setPayloadSize(16);
-    
     // Send the Sketch Version Information to the Gateway
     gw.sendSketchInfo("Bespin", "1.0");
 
