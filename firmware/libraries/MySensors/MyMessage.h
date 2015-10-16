@@ -111,7 +111,12 @@ typedef enum {
 	V_HVAC_FLOW_STATE=21,  // S_HEATER, S_HVAC. HVAC flow state ("Off", "HeatOn", "CoolOn", or "AutoChangeOver") 
 	V_HVAC_SPEED, // S_HVAC, S_HEATER. HVAC/Heater fan speed ("Min", "Normal", "Max", "Auto") 
 	V_LIGHT_LEVEL, // S_LIGHT_LEVEL. Uncalibrated light level. 0-100%. Use V_LEVEL for light level in lux
-	V_VAR1, V_VAR2, V_VAR3, V_VAR4, V_VAR5,
+	#ifdef DUPPY
+	V_GAS=24,
+	#else
+	V_VAR1,
+	#endif
+	V_VAR2, V_VAR3, V_VAR4, V_VAR5,
 	V_UP, // S_COVER. Window covering. Up
 	V_DOWN, // S_COVER. Window covering. Down
 	V_STOP, // S_COVER. Window covering. Stop

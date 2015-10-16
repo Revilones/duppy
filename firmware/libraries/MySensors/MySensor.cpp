@@ -693,6 +693,9 @@ boolean MySensor::process() {
 						// Write id to EEPROM
 						hw_writeConfig(EEPROM_NODE_ID_ADDRESS, nc.nodeId);
 						debug(PSTR("id=%d\n"), nc.nodeId);
+						#ifdef DUPPY
+						hw_reboot();
+						#endif
 					}
 				} else if (type == I_CONFIG) {
 					// Pick up configuration from controller (currently only metric/imperial)
