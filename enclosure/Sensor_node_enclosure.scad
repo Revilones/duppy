@@ -1,10 +1,22 @@
-height_upper = 7+4;
+wall = 2;
+guide_wall = 1.2;
+height_upper = 14+wall;
+height_lower = 16+wall;
 width = 61+4;
 length = 88+4;
-wall = 2;
+
+//Width of hole for pins to connect upper and lower half
+pin_hole_width = 1.5;
+//Width of pilot hole for mounting screws
+pilot_hole_width = .75;
+
+//Button Dimensions
 button_rad=3.81;
+button_height = wall + 6;
+stopper_height = 6;
 stopper_rad=button_rad+1;
 stopper_diam=2*stopper_rad;
+actuation_height = height_upper + height_lower - wall*2 - (4.6 + 2);
 
 part="all";
 
@@ -15,78 +27,97 @@ module upper_simple()
     difference()
     {
         cube([length,width,height_upper], false);  //inner height of 9mm
-        translate([2,2,2]) cube([length - wall*2,width-wall*2,height_upper-wall+1],false);
+        translate([2,2,2]) cube([length - wall*2,width-wall*2,height_upper],false);
         //creating ledge for bottom 
         translate([-1,-1, height_upper-1]) cube([length+2,2,2], false);
         translate([-1,width-1, height_upper-1]) cube([length+2,2,2], false);
         translate([-1,-1, height_upper-1]) cube([2,width+2,2], false);
         translate([length-1,-1, height_upper-1]) cube([2,width+2,2], false);
-        //LCD cutouts 
-        translate([24.7+2,15.1+2,-1]) /*LCD1 43.6x34*/ cube([43.6,34,4], false);
-        translate([3+2,25+2,-1]) /*LCD2 20x15.1*/ cube([15.1, 20, 4], false);
+
+		//LCD 43.6x34
+        translate([24.7+2,15.1+2,-1]) cube([43.6,34,4], false);
+		//DHT22 20x15.1
+        translate([3+2,25+2,-1]) cube([15.1, 20, 4], false);
+
         //button holes
         translate([length-8.51,19.05+2,-1]) #cylinder (h=4,r=button_rad);
         translate([length-8.51,29.21+2,-1]) #cylinder (h=4,r=button_rad);
         translate([length-8.51,39.37+2,-1]) #cylinder (h=4,r=button_rad);
         translate([length-8.51,49.53+2,-1]) #cylinder (h=4,r=button_rad);
+
         //power supply hole
         translate([length-3,wall+3.15,height_upper-1]) cube([4,10,13]);
     }
-    //main mounting holes depth of 7mm, outer radius of 2mm inner radius of 1mm
+
+	//Button Guides
+	difference()
+	{
+		union()
+		{
+			translate([length-8.51,19.05+2,0]) cylinder (h=stopper_height*2,r=stopper_rad+guide_wall);
+			translate([length-8.51,29.21+2,0]) cylinder (h=stopper_height*2,r=stopper_rad+guide_wall);
+			translate([length-8.51,39.37+2,0]) cylinder (h=stopper_height*2,r=stopper_rad+guide_wall);
+			translate([length-8.51,49.53+2,0]) cylinder (h=stopper_height*2,r=stopper_rad+guide_wall);
+		}
+		union()
+		{
+			translate([length-8.51,19.05+2,0]) cylinder (h=stopper_height*2,r=stopper_rad);
+			translate([length-8.51,29.21+2,0]) cylinder (h=stopper_height*2,r=stopper_rad);
+			translate([length-8.51,39.37+2,0]) cylinder (h=stopper_height*2,r=stopper_rad);
+			translate([length-8.51,49.53+2,0]) cylinder (h=stopper_height*2,r=stopper_rad);
+		}
+	}
+
+    //Pin Holes for connecting upper and lower half
     difference()
     {
         translate([3,3,0]) cylinder (h=7+4,r=3, $fn=100);
-        translate([3,3,1]) #cylinder (h=7+4,r=1, $fn=100);
-        translate([-1,-1, height_upper-1]) cube([length+2,2,2], false);
-        translate([-1,-1, height_upper-1]) cube([2,width+2,2], false);
+        translate([3,3,1]) #cylinder (h=7+4,r=pin_hole_width, $fn=100);
     }
     difference()
     {
         translate([length-5,2,0]) cube([3,3,11]);
-        translate([length-3,3,1]) cylinder (h=12,r=1, $fn=100);
-        translate([-1,-1, height_upper-1]) cube([length+2,2,2], false);
-        translate([length-1,-1, height_upper-1]) cube([2,width+2,2], false);
+        translate([length-3,3,1]) cylinder (h=12,r=pin_hole_width, $fn=100);
     }
     difference()
     {
         translate([length-3,width-3,0]) cylinder (h=7+4,r=3, $fn=100);
-        translate([length-3,width-3,1]) #cylinder (h=12,r=1, $fn=100);
-        translate([-1,width-1, height_upper-1]) cube([length+2,2,2], false);
-        translate([length-1,-1, height_upper-1]) cube([2,width+2,2], false);
+        translate([length-3,width-3,1]) #cylinder (h=12,r=pin_hole_width, $fn=100);
     }
     difference()
     {
         translate([3,width-3,0]) cylinder (h=11,r=3, $fn=100);
-        translate([3,width-3,1]) #cylinder (h=12,r=1, $fn=100);
-        translate([-1,width-1, height_upper-1]) cube([length+2,2,2], false);
-        translate([-1,-1, height_upper-1]) cube([2,width+2,2], false);
+        translate([3,width-3,1]) #cylinder (h=12,r=pin_hole_width, $fn=100);
     }
-    //LCD mounting Holes -> extruded hole is 1mm into the face of the cover. total depth of screw hole is 2.5mm
+
+    //LCD mounting Holes -> extruded hole is 1mm into the face of the cover.
+    //total depth of screw hole is 2.5mm
     difference()
     {
         translate([24.4, width-14.2,0]) cylinder(h=wall+1,r=2, $fn=100);
-        translate([24.4, width-14.2,1]) #cylinder(h=wall+1,r=.5, $fn=100);
+        translate([24.4, width-14.2,1]) #cylinder(h=wall+1,r=pilot_hole_width, $fn=100);
     }
     difference ()
     {
         translate([wall+22.4,wall+16.4,0]) cylinder(h=wall+1,r=2, $fn=100);
-        translate([wall+22.4,wall+16.4,1]) #cylinder(h=wall+1,r=.5, $fn=100);
+        translate([wall+22.4,wall+16.4,1]) #cylinder(h=wall+1,r=pilot_hole_width, $fn=100);
     }
     difference ()
     {
         translate([length-19.4,width-14.2,0]) cylinder(h=wall+1,r=2, $fn=100);
-        translate([length-19.4,width-14.2,1]) #cylinder(h=wall+1,r=.5, $fn=100);
+        translate([length-19.4,width-14.2,1]) #cylinder(h=wall+1,r=pilot_hole_width, $fn=100);
     }
     difference ()
     {
         translate([length-19.4, 18.4,0]) cylinder(h=wall+1,r=2, $fn=100);
-        translate([length-19.4, 18.4,1]) #cylinder(h=wall+1,r=.5, $fn=100);
+        translate([length-19.4, 18.4,1]) #cylinder(h=wall+1,r=pilot_hole_width, $fn=100);
     }
+
     //DHT mounting hole
     difference()
     {
         translate([5,23,2]) cube([15.1,4,3], false);
-        translate([12.55,25.22,1]) #cylinder(h=wall+4,r=.5,$fn=100,center=false);
+        translate([12.55,25.22,1]) #cylinder(h=wall+4,r=pilot_hole_width,$fn=100,center=false);
     }
 }
 module base_simple()
@@ -94,9 +125,9 @@ module base_simple()
     //main shell
     difference ()
     {
-       cube([92,65,18]); //inner height of 16mm 
-       translate([2,2,2]) cube([88,61,18]);
-       translate([1,1,17]) cube([90,63,5]);
+       cube([length,width,height_lower]);
+       translate([2,2,2]) cube([length-wall*2,width-wall*2,height_lower]);
+       translate([1,1,height_lower-1]) cube([length-1,width-1,5]);
 
        //hanger 1
        translate([15+wall,width/2,-1]) cylinder(r=4,h=6);
@@ -106,8 +137,9 @@ module base_simple()
        translate([length-15,(width/2)+5,-1]) cylinder(r=2.7,h=6);
 
        //power supply cutout 
-         //4.4mm above face (3mm for mounting height+1.4mm for pcb width
-       translate([length-3,wall+3.18,wall+5]) #cube([6,10,12]);//10x10mm hole
+       //4.4mm above face (3mm for mounting height+1.6mm for pcb width
+       translate([length-3,wall+3.18,wall+4.6]) #cube([6,10,12]);//10x10mm hole
+
        //vent holes
        translate([10,-1,4]) cube([1,width+2,10]);
        translate([12,-1,5]) cube([1,width+2,10]);
@@ -122,48 +154,50 @@ module base_simple()
        translate([58,-1,5]) cube([1,width+2,10]);
        translate([56,-1,6]) cube([1,width+2,10]);
     }
-    //main screw holes
+
+    //Pin Holes for connecting upper and lower halfs
     difference()
     {
         translate([3,3,0]) cylinder (h=7+4,r=3, $fn=100);
-        translate([3,3,1]) #cylinder (h=7+4,r=1, $fn=100);
+        translate([3,3,1]) #cylinder (h=7+4,r=pin_hole_width, $fn=100);
     }
     difference()
     {
         translate([length-5,2,0]) cube([3,3,11]);
-        translate([length-3,3,1]) #cylinder (h=12,r=1, $fn=100);
+        translate([length-3,3,1]) #cylinder (h=12,r=pin_hole_width, $fn=100);
         
     }
     difference()
     {
         translate([length-3,width-3,0]) cylinder (h=7+4,r=3, $fn=100);
-        translate([length-3,width-3,1]) #cylinder (h=12,r=1, $fn=100);
+        translate([length-3,width-3,1]) #cylinder (h=12,r=pin_hole_width, $fn=100);
     }
     difference()
     {
         translate([3,width-3,0]) cylinder (h=11,r=3, $fn=100);
-        translate([3,width-3,1]) #cylinder (h=12,r=1, $fn=100);
+        translate([3,width-3,1]) #cylinder (h=12,r=pin_hole_width, $fn=100);
     }
+
     //pcb mounting holes
     difference()
     {
         translate([wall+8.9,wall+6.35,wall]) cylinder(h=3,r=3,$fn=20);
-        translate([wall+8.9,wall+6.35,wall-1]) #cylinder(h=5,r=.5,$fn=20);
+        translate([wall+8.9,wall+6.35,wall-1]) #cylinder(h=5,r=pilot_hole_width,$fn=20);
     }
     difference()
     {
         translate([wall+9.65,width-8.35,wall]) cylinder(h=3,r=3,$fn=20);
-        translate([wall+9.65,width-8.35,wall-1]) #cylinder(h=5,r=.5,$fn=20);
+        translate([wall+9.65,width-8.35,wall-1]) #cylinder(h=5,r=pilot_hole_width,$fn=20);
     }
     difference()
     {
         translate([length-17.61,width-8.35,wall]) cylinder(h=3,r=3,$fn=20);
-        translate([length-17.61,width-8.35,wall-1]) #cylinder(h=5,r=.5,$fn=20);
+        translate([length-17.61,width-8.35,wall-1]) #cylinder(h=5,r=pilot_hole_width,$fn=20);
     }
     difference()
     {
         translate([length-21.42,8.35,wall]) cylinder(h=3,r=3,$fn=20);
-        translate([length-21.42,8.35,wall-1]) #cylinder(h=5,r=.5,$fn=20);
+        translate([length-21.42,8.35,wall-1]) #cylinder(h=5,r=pilot_hole_width,$fn=20);
     }    
     //hanger 2
 //    difference()
@@ -179,12 +213,12 @@ module button()
     $fn=20;
     union()
     {
-        //stopper
-        cylinder(h=wall,r=stopper_rad);
         //button height
-        cylinder(h=wall+wall+4,r=button_rad-0.50);
+        translate([0,0,0]) cylinder(h=button_height,r=button_rad-0.50);
+        //stopper
+        translate([0,0,button_height]) cylinder(h=stopper_height,r=stopper_rad-0.50);
         //actuation height
-        mirror([0,0,1]) cylinder(h=17,r=2);
+        translate([0,0,button_height+stopper_height]) cylinder(h=actuation_height,r=2);
     }
 }
 module view_all()
@@ -193,10 +227,10 @@ module view_all()
     {
         mirror([0,1,0]) translate([10,-width,0]) upper_simple();
         mirror([0,0,0]) translate([10,width+2,0]) base_simple();
-        mirror([0,0,1]) translate([44,3*stopper_diam+stopper_rad+4,-8]) button();
-        mirror([0,0,1]) translate([44,2*stopper_diam+stopper_rad+2,-8]) button();
-        mirror([0,0,1]) translate([55,3*stopper_diam+stopper_rad+4,-8]) button();
-        mirror([0,0,1]) translate([55,2*stopper_diam+stopper_rad+2,-8]) button();
+        translate([44,3*stopper_diam+stopper_rad+4,0]) button();
+        translate([44,2*stopper_diam+stopper_rad+2,0]) button();
+        translate([55,3*stopper_diam+stopper_rad+4,0]) button();
+        translate([55,2*stopper_diam+stopper_rad+2,0]) button();
     }
 }
 module view()
