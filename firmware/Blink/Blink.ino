@@ -10,7 +10,7 @@
 // Pin 6  has the LED on Teensy++ 2.0
 // Pin 13 has the LED on Teensy 3.0
 // give it a name:
-int led = 8;
+int led = A2;
 
 // the setup routine runs once when you press reset:
 void setup() {                
