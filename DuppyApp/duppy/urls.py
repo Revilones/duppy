@@ -4,7 +4,7 @@ from django.views.generic import RedirectView
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'bespin.views.home', name='home'),
+    # url(r'^$', 'duppy.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
     #(r'^grappelli/', include('grappelli.urls')), # grappelli URLS

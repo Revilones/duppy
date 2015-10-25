@@ -9,16 +9,18 @@ Website: https://virtualenv.pypa.io/en/latest/
     sudo pip install virtualenv
 
 ### Create a virtual python environment
-    virtualenv --no-site- PATH
-    source ~/.virtualenv/bespin/bin/activate
+    mkdir -p ~/.virtualenv/duppy
+    virtualenv --no-site- ~/.virtualenv/duppy
+    source ~/.virtualenv/duppy/bin/activate
 
-## Install bespin
+## Install duppy
+    *OSX May need run brew install mysql
     pip install -r requirements.txt
-    apt-get install rabbitmq-server
     python manage.py syncdb
-    python manage.py runserver
+    python manage.py runserver 0.0.0.0:8000
 
-### Run celery
+### Install/Use Cellery
+    apt-get install rabbitmq-server
     python manage.py celery beat
     python manage.py celery worker
     Add a Tesk in the webui

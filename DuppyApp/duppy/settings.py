@@ -1,5 +1,5 @@
 """
-Django settings for bespin project.
+Django settings for duppy project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -58,12 +58,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'bespin.middleware.ConsoleExceptionMiddleware',
+    'duppy.middleware.ConsoleExceptionMiddleware',
 )
 
-ROOT_URLCONF = 'bespin.urls'
+ROOT_URLCONF = 'duppy.urls'
 
-WSGI_APPLICATION = 'bespin.wsgi.application'
+WSGI_APPLICATION = 'duppy.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
