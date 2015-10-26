@@ -1,5 +1,5 @@
 #include <string.h>
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(__PIC32MX__)
 	#include <avr/pgmspace.h>
 	#define PRIPSTR "%S"
 #elif defined(ESP8266)

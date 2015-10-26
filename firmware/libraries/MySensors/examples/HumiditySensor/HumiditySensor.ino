@@ -27,6 +27,7 @@
  * http://www.mysensors.org/build/humidity
  */
  
+#include <EEPROM.h>
 #include <SPI.h>
 #include <MySensor.h>  
 #include <DHT.h>  

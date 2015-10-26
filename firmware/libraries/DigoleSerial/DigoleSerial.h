@@ -143,11 +143,13 @@ void begin(void) {
     }
     //print function
 
+#if 0
     size_t println(const __FlashStringHelper *v) {
         preprint();
         Print::println(v);
         Print::print("\x0dTRT");
     }
+#endif
 
     size_t println(const String &v) {
         preprint();
@@ -213,10 +215,12 @@ void begin(void) {
         Print::println("\x0dTRT");
     }
 
+#if 0
     size_t print(const __FlashStringHelper *v) {
         preprint();
         Print::println(v);
     }
+#endif
 
     size_t print(const String &v) {
         preprint();

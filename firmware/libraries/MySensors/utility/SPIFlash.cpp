@@ -56,7 +56,7 @@ void SPIFlash::select() {
 #ifndef SPI_HAS_TRANSACTION
   noInterrupts();
 #endif
-#ifndef ESP8266
+#if !defined(ESP8266) && !defined(__PIC32MX__)
   _SPCR = SPCR;
   _SPSR = SPSR;
 #endif
@@ -82,7 +82,7 @@ void SPIFlash::unselect() {
 #else  
   interrupts();
 #endif
-#ifndef ESP8266
+#if !defined(ESP8266) && !defined(__PIC32MX__)
   SPCR = _SPCR;
   SPSR = _SPSR;
 #endif
@@ -91,7 +91,7 @@ void SPIFlash::unselect() {
 /// setup SPI, read device ID etc...
 boolean SPIFlash::initialize()
 {
-#ifndef ESP8266
+#if !defined(ESP8266) && !defined(__PIC32MX__)
   _SPCR = SPCR;
   _SPSR = SPSR;
 #endif

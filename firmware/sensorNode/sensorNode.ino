@@ -138,7 +138,7 @@ void clearEEPROM()
 void resetNode()
 {
     clearEEPROM();
-    asm volatile ("  jmp 0");
+    hw_reboot();
 }
 
 void setup()

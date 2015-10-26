@@ -47,6 +47,10 @@
   // TODO !! Untested code! Entering unknown territory...
   #define RF69_IRQ_PIN          2
   #define RF69_IRQ_NUM          0
+#elif defined(__PIC32MX__)
+  // TODO !! Untested code! Entering unknown territory...
+  #define RF69_IRQ_PIN          2
+  #define RF69_IRQ_NUM          0
 #endif
 
 #define CSMA_LIMIT          -90 // upper RX signal sensitivity threshold in dBm for carrier sense access
