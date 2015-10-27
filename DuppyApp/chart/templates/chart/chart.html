@@ -1,4 +1,7 @@
-{% include "base/base.html" %}
+{% extends "base/index.html" %}
+
+{% block maincontent %}
+
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 
@@ -163,7 +166,7 @@ $(document).ready(function() {
 
 </script>
 
-<body>
+
   <br>
   <div id="chart" align="center" style="width:95%; height:60%; margin:auto; padding-top: 50px;"></div>
   <div id="chartControls" style="margin-left:3%;">
@@ -189,4 +192,5 @@ $(document).ready(function() {
       <button id="buttonClear" onclick="clearChart();">Clear</button>
     </p>
   </div>
-</body>
+
+{% endblock %}

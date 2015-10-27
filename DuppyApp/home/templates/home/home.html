@@ -1,0 +1,18 @@
+{% extends "base/index.html" %}
+
+{% block maincontent %}
+
+    <div id="content" class="container">
+    {% for room in rooms %}
+        <div class="row-fluid">
+            <h1>{{room.name}}</h1>
+        {% for sensor in room.list_sensors %}
+            <div class="col-sm-6" style="text-align: center">
+                {{ sensor.as_html|safe }}
+            </div>
+        {% endfor %}
+        </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}
