@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.4.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.005" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.5" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -294,17 +294,16 @@
 <wire x1="30.48" y1="6.35" x2="31.115" y2="5.715" width="0.2032" layer="21"/>
 <wire x1="31.75" y1="1.27" x2="31.115" y2="1.905" width="0.2032" layer="21"/>
 <wire x1="31.75" y1="6.35" x2="31.115" y2="5.715" width="0.2032" layer="21"/>
-<hole x="3.175" y="47.625" drill="1.5875"/>
 </package>
 <package name="CONTAINER_BOTTOM">
 <wire x1="0" y1="0" x2="0" y2="93" width="0.127" layer="21"/>
 <wire x1="72.96" y1="93" x2="72.96" y2="0" width="0.127" layer="21"/>
 <wire x1="72.96" y1="0" x2="0" y2="0" width="0.127" layer="21"/>
 <wire x1="0" y1="93" x2="72.96" y2="93" width="0.127" layer="21"/>
-<hole x="66" y="7" drill="2.8"/>
-<hole x="66" y="86" drill="2.8"/>
-<hole x="7" y="86" drill="2.8"/>
-<hole x="6.35" y="19.415" drill="2.8"/>
+<hole x="59.65" y="7" drill="2.8"/>
+<hole x="61.5" y="79" drill="2.8"/>
+<hole x="6" y="82.19" drill="2.8"/>
+<hole x="6" y="19.415" drill="2.8"/>
 </package>
 <package name="CONTAINER_TOP">
 <wire x1="0" y1="0" x2="0" y2="92" width="0.127" layer="21"/>
@@ -368,12 +367,13 @@
 <rectangle x1="14.73" y1="22" x2="48.73" y2="25" layer="51"/>
 </package>
 <package name="TGS5042">
-<wire x1="1" y1="0" x2="50" y2="0" width="2.54" layer="20"/>
-<wire x1="50" y1="0" x2="50" y2="17" width="2.54" layer="20"/>
-<wire x1="50" y1="17" x2="1" y2="17" width="2.54" layer="20"/>
-<wire x1="1" y1="17" x2="1" y2="0" width="2.54" layer="20"/>
-<pad name="CE" x="-4" y="9" drill="4.1"/>
-<pad name="WE" x="55" y="9" drill="4.1"/>
+<pad name="WE" x="0" y="6.5" drill="1.2"/>
+<pad name="CE1" x="50" y="11" drill="1.2"/>
+<pad name="CE" x="50" y="3" drill="1.2"/>
+<wire x1="0" y1="14" x2="0" y2="0" width="0.127" layer="21"/>
+<wire x1="0" y1="0" x2="50" y2="0" width="0.127" layer="21"/>
+<wire x1="50" y1="0" x2="50" y2="14" width="0.127" layer="21"/>
+<wire x1="50" y1="14" x2="0" y2="14" width="0.127" layer="21"/>
 </package>
 <package name="R_8">
 <smd name="1" x="-2.3622" y="1.905" dx="2.1844" dy="0.5588" layer="1"/>
@@ -1903,6 +1903,45 @@
 <rectangle x1="12.2555" y1="33.3375" x2="12.7635" y2="33.4645" layer="122"/>
 <rectangle x1="12.2555" y1="33.4645" x2="12.7635" y2="33.5915" layer="122"/>
 </package>
+<package name="DFN6-3X3">
+<description>&lt;b&gt;6-Lead Plastic Dual Flat No Lead Package&lt;/b&gt; - 3x3 mm Body [DFN]&lt;br&gt;
+&lt;br&gt;
+Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7006-A10.pdf"&gt;http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7006-A10.pdf&lt;/a&gt;</description>
+<smd name="4" x="1.45" y="-1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="5" x="1.45" y="0" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="6" x="1.45" y="1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="1" x="-1.45" y="1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="2" x="-1.45" y="0" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="3" x="-1.45" y="-1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="EXP" x="0" y="0" dx="1.6" dy="2.5" layer="1" stop="no" cream="no"/>
+<rectangle x1="-0.6" y1="-1.05" x2="0.6" y2="1.05" layer="31"/>
+<wire x1="1.5" y1="1.5" x2="1.5" y2="-1.5" width="0.1016" layer="51"/>
+<rectangle x1="-1.5" y1="1.36" x2="-1.1" y2="1.5" layer="21"/>
+<wire x1="-1.5" y1="-1.5" x2="-1.5" y2="1.5" width="0.1016" layer="51"/>
+<wire x1="1.5" y1="1.5" x2="-1.5" y2="1.5" width="0.1524" layer="21"/>
+<rectangle x1="-0.85" y1="-1.3" x2="0.85" y2="1.3" layer="29"/>
+<rectangle x1="0.975" y1="0.725" x2="1.925" y2="1.275" layer="29"/>
+<rectangle x1="0.975" y1="-0.275" x2="1.925" y2="0.275" layer="29"/>
+<rectangle x1="0.975" y1="-1.275" x2="1.925" y2="-0.725" layer="29"/>
+<rectangle x1="-1.925" y1="0.725" x2="-0.975" y2="1.275" layer="29"/>
+<rectangle x1="-1.925" y1="-0.275" x2="-0.975" y2="0.275" layer="29"/>
+<rectangle x1="-1.925" y1="-1.275" x2="-0.975" y2="-0.725" layer="29"/>
+<rectangle x1="1.05" y1="0.8" x2="1.85" y2="1.2" layer="31"/>
+<rectangle x1="1.05" y1="-0.2" x2="1.85" y2="0.2" layer="31"/>
+<rectangle x1="1.05" y1="-1.2" x2="1.85" y2="-0.8" layer="31"/>
+<rectangle x1="-1.85" y1="0.8" x2="-1.05" y2="1.2" layer="31"/>
+<rectangle x1="-1.85" y1="-0.2" x2="-1.05" y2="0.2" layer="31"/>
+<rectangle x1="-1.85" y1="-1.2" x2="-1.05" y2="-0.8" layer="31"/>
+<wire x1="1.5" y1="1.36" x2="1.5" y2="1.5" width="0.1524" layer="21"/>
+<wire x1="-1.5" y1="-1.5" x2="-1.5" y2="-1.36" width="0.1524" layer="21"/>
+<wire x1="1.5" y1="-1.5" x2="1.5" y2="-1.36" width="0.1524" layer="21"/>
+<wire x1="-1.5" y1="1.36" x2="-1.5" y2="1.5" width="0.1524" layer="21"/>
+<wire x1="1.5" y1="1.5" x2="-1.5" y2="1.5" width="0.1016" layer="51"/>
+<wire x1="1.5" y1="-1.5" x2="-1.5" y2="-1.5" width="0.1016" layer="51"/>
+<wire x1="1.5" y1="-1.5" x2="-1.5" y2="-1.5" width="0.1524" layer="21"/>
+<text x="-1.45" y="1.9" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.45" y="-3.2" size="1.27" layer="27">&gt;VALUE</text>
+</package>
 </packages>
 <symbols>
 <symbol name="K-30">
@@ -1974,7 +2013,8 @@
 <wire x1="20.32" y1="10.16" x2="20.32" y2="0" width="0.254" layer="94"/>
 <wire x1="20.32" y1="0" x2="0" y2="0" width="0.254" layer="94"/>
 <pin name="WE" x="22.86" y="5.08" length="middle" rot="R180"/>
-<pin name="CE" x="-2.54" y="5.08" length="middle"/>
+<pin name="CE@1" x="-2.54" y="7.62" length="middle"/>
+<pin name="CE@2" x="-2.54" y="2.54" length="middle"/>
 </symbol>
 <symbol name="ADA4077-1ARZ">
 <pin name="V+" x="0" y="0" direction="pas"/>
@@ -2017,6 +2057,20 @@
 <pin name="IRQ" x="20.32" y="7.62" length="middle" rot="R180"/>
 <pin name="GND@1" x="-17.78" y="5.08" length="middle"/>
 <pin name="GND@2" x="20.32" y="5.08" length="middle" rot="R180"/>
+</symbol>
+<symbol name="SI7006/20/21/50/53/54/55">
+<wire x1="-10.16" y1="5.08" x2="10.16" y2="5.08" width="0.254" layer="94"/>
+<wire x1="10.16" y1="5.08" x2="10.16" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-5.08" x2="-10.16" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-5.08" x2="-10.16" y2="5.08" width="0.254" layer="94"/>
+<text x="-10.16" y="6.35" size="1.778" layer="95">&gt;NAME</text>
+<text x="-10.16" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="SDA" x="-12.7" y="2.54" length="short"/>
+<pin name="DNC" x="-12.7" y="-2.54" length="short" direction="nc"/>
+<pin name="GND" x="-12.7" y="0" length="short" direction="pwr"/>
+<pin name="VDD" x="12.7" y="0" length="short" direction="pwr" rot="R180"/>
+<pin name="DNC@1" x="12.7" y="-2.54" length="short" direction="nc" rot="R180"/>
+<pin name="SCL" x="12.7" y="2.54" length="short" direction="in" rot="R180"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -2065,13 +2119,14 @@
 </deviceset>
 <deviceset name="TGS5042">
 <gates>
-<gate name="G$1" symbol="TGS5042" x="0" y="0"/>
+<gate name="A00" symbol="TGS5042" x="0" y="0"/>
 </gates>
 <devices>
 <device name="A" package="TGS5042">
 <connects>
-<connect gate="G$1" pin="CE" pad="CE"/>
-<connect gate="G$1" pin="WE" pad="WE"/>
+<connect gate="A00" pin="CE@1" pad="CE"/>
+<connect gate="A00" pin="CE@2" pad="CE1"/>
+<connect gate="A00" pin="WE" pad="WE"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -2121,6 +2176,52 @@
 </connects>
 <technologies>
 <technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="SI7021-*" prefix="IC">
+<description>&lt;b&gt;I&lt;sup&gt;2&lt;/sup&gt;C Humidity and Temperature Sensor&lt;/b&gt;&lt;br&gt;
+&lt;br&gt;
+Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7021.pdf"&gt;http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7021.pdf&lt;/a&gt;</description>
+<gates>
+<gate name="G$1" symbol="SI7006/20/21/50/53/54/55" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="DFN6-3X3">
+<connects>
+<connect gate="G$1" pin="DNC" pad="3"/>
+<connect gate="G$1" pin="DNC@1" pad="4"/>
+<connect gate="G$1" pin="GND" pad="2"/>
+<connect gate="G$1" pin="SCL" pad="6"/>
+<connect gate="G$1" pin="SDA" pad="1"/>
+<connect gate="G$1" pin="VDD" pad="5"/>
+</connects>
+<technologies>
+<technology name="A10-GM">
+<attribute name="MF" value="Silicon Labs" constant="no"/>
+<attribute name="MPN" value="Si7021-A10-GM" constant="no"/>
+<attribute name="OC_FARNELL" value="2422571" constant="no"/>
+<attribute name="OC_NEWARK" value="55X3111" constant="no"/>
+</technology>
+<technology name="A10-GM1">
+<attribute name="MF" value="Silicon Labs" constant="no"/>
+<attribute name="MPN" value="Si7021-A10-GM1" constant="no"/>
+<attribute name="OC_FARNELL" value="2422570" constant="no"/>
+<attribute name="OC_NEWARK" value="55X3112" constant="no"/>
+</technology>
+<technology name="A10-IM">
+<attribute name="MF" value="Silicon Labs" constant="no"/>
+<attribute name="MPN" value="Si7021-A10-IM" constant="no"/>
+<attribute name="OC_FARNELL" value="2422573" constant="no"/>
+<attribute name="OC_NEWARK" value="55X3113" constant="no"/>
+</technology>
+<technology name="A10-IM1">
+<attribute name="MF" value="Silicon Labs" constant="no"/>
+<attribute name="MPN" value="Si7021-A10-IM1" constant="no"/>
+<attribute name="OC_FARNELL" value="2422572" constant="no"/>
+<attribute name="OC_NEWARK" value="55X3114" constant="no"/>
+</technology>
 </technologies>
 </device>
 </devices>
