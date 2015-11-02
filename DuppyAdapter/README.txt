@@ -1,2 +1,2 @@
 To Start Adapter
-sudo python ./bespin_apdapter.py start -d /dev/ttyAMA0
+sudo python ./duppy_apdapter.py start -d /dev/ttyAMA0

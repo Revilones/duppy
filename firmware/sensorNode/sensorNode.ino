@@ -5,13 +5,13 @@
 #include <SPI.h>
 #include <Wire.h>
 
-#include <bespinTypes.h>
+#include <duppyTypes.h>
 #include <kSeries.h>
 #include <MySensor.h>
 #include <DHT.h>
 #include <DigoleSerial.h>
 
-#include "bespinSensor.h"
+#include "duppySensor.h"
 
 #define CHILD_ID_HUM 0
 #define CHILD_ID_TEMP 1

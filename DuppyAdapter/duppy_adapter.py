@@ -15,7 +15,7 @@ import settings
 ERROR = -1
 SUCCESS = 0
 
-LOG = logging.getLogger("bespin_adapter")
+LOG = logging.getLogger("duppy_adapter")
 
 ###############################################################################
 # Bespin Cloud API

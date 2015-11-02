@@ -1,5 +1,5 @@
 
-#include "bespinSensor.h"
+#include "duppySensor.h"
 
 int readHumidity(DHT *dht, float *Humidity)
 {

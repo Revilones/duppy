@@ -45,8 +45,8 @@ void setup() {
   mydisp.setI2CAddress(0x29);
   mydisp.print("uploading start screen now...(1024 bytes)");
   delay(500);            //this delay is very important, it will let module to clear the receive buffer
-  //mydisp.uploadStartScreen(1024,bespinWelcome);
-  mydisp.drawBitmap256(0, 0, 160, 128, bespinWelcome);
+  //mydisp.uploadStartScreen(1024,duppyWelcome);
+  mydisp.drawBitmap256(0, 0, 160, 128, duppyWelcome);
   delay(500);
   //mydisp.displayStartScreen(1);
 #if 0

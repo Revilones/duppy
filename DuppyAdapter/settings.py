@@ -5,8 +5,8 @@ import logging
 
 
 LOG_LEVEL = logging.debug
-LOG_FILE = "/var/log/bespin_adapter.log"
-PID_FILE = "/var/run/bespin_adapter.pid"
+LOG_FILE = "/var/log/duppy_adapter.log"
+PID_FILE = "/var/run/duppy_adapter.pid"
 
 USE_METRIC = False
 
