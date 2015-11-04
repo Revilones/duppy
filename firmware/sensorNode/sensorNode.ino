@@ -12,154 +12,28 @@
 #include <DigoleSerial.h>
 
 #include "duppySensor.h"
+#include "duppyMenu.h"
+#include "duppyButton.h"
 
 #define CHILD_ID_HUM 0
 #define CHILD_ID_TEMP 1
 #define CHILD_ID_CO2 2
 
 #define HUMIDITY_SENSOR_DIGITAL_PIN A3
-//#define HUMIDITY_SENSOR_DIGITAL_PIN 3
 #define STATUS_LED A2
-//#define STATUS_LED 4
 #define LCD_BL 50
-
-#define BUTTON_UP    5
-#define BUTTON_DOWN  6
-#define BUTTON_BACK  7
-#define BUTTON_ENTER 8
-#define NO_BUTTON -1
-
-#define READINGS      0
-#define SENSOR_ID     1
-#define DISPLAY_OFF   2
-#define RESET         3 
-#define END_OF_LIST   3
 
 #define SENSOR_INTERVAL 60000 //Delay between sensor readings
 
 DigoleSerialDisp mydisp(&Wire,'\x27');
+DuppyMenu menu(&mydisp);
 MySensor gw;
 DHT gDHT;
 kSeries gK_30(3,4);
-//kSeries K_30(6,7);
 boolean metric = true; 
 MyMessage msgHum(CHILD_ID_HUM, V_HUM);
 MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
 MyMessage msgCo2(CHILD_ID_CO2, V_GAS);
-
-typedef struct button_state {
-    long lastDebounceTime;
-    boolean lastBounceState;
-    boolean lastState;
-    boolean currentState;
-}; 
-
-long debounceDelay = 10;
-
-int debounceButton(int buttonPin, struct button_state *pState)
-{
-    int error = SUCCESS;
-    boolean reading = digitalRead(buttonPin);
-  
-    if (reading != pState->lastBounceState)
-    {
-        pState->lastDebounceTime = millis();
-    } 
-    
-    pState->lastBounceState = reading;
-
-    if ((millis() - pState->lastDebounceTime) > debounceDelay)
-    {
-        pState->currentState = reading;
-    }
-    else
-    {
-        error = ERROR_INTERNAL;
-    }
-
-    return error;
-}
-
-struct button_state upState = {0};
-struct button_state downState = {0};
-struct button_state backState = {0};
-struct button_state enterState = {0};
-
-int getButtonPress()
-{
-    int button = NO_BUTTON;
-
-    if (debounceButton(BUTTON_UP, &upState) == SUCCESS &&
-        upState.currentState != upState.lastState)
-    {
-        if (upState.currentState == LOW)
-        {
-            button = BUTTON_UP;
-        }
-        upState.lastState = upState.currentState;
-    } 
-    else if(debounceButton(BUTTON_DOWN, &downState) == SUCCESS &&
-        downState.currentState != downState.lastState)
-    {
-        if (downState.currentState == LOW)
-        {
-            button = BUTTON_DOWN;
-        }
-        downState.lastState = downState.currentState;
-    } 
-    else if (debounceButton(BUTTON_BACK, &backState) == SUCCESS &&
-        backState.currentState != backState.lastState)
-    {
-        if (backState.currentState == LOW)
-        {
-            button = BUTTON_BACK;
-        }
-        backState.lastState = backState.currentState;
-    } 
-    else if (debounceButton(BUTTON_ENTER, &enterState) == SUCCESS &&
-        enterState.currentState != enterState.lastState)
-    {
-        if (enterState.currentState == LOW)
-        {
-            button = BUTTON_ENTER;
-        }
-        enterState.lastState = enterState.currentState;
-    } 
-    else
-    {
-        button = NO_BUTTON;
-    }
-
-    return button;
-}
-
-void changeCursor(int prevCursor, int cursor)
-{
-    mydisp.setMode('~');
-    mydisp.drawBox(0, 30*prevCursor, 160, 30);
-    mydisp.drawBox(0, 30*cursor, 160, 30);
-}
-
-void printMenuItem(char *item)
-{
-    mydisp.setFont(51);
-    mydisp.print(item);
-    mydisp.nextTextLine();
-    mydisp.setFont(10);
-    mydisp.nextTextLine();
-}
-
-void displayMenu()
-{
-    mydisp.setPrintPos(0, 1, _TEXT_);
-    printMenuItem("Readings");
-    printMenuItem("Sensor ID");
-    printMenuItem("Display Off");
-    printMenuItem("Reset");
-
-    mydisp.setMode('~');
-    mydisp.drawBox(0, 0, 160, 30);
-}
 
 void displayReadings()
 {
@@ -246,6 +120,12 @@ void displaySensorId()
     return;
 }
 
+void displayOff()
+{
+    mydisp.setBackLight(0);
+    displayReadings();
+}
+
 void clearEEPROM()
 {
     for (int i=0;i<512;i++) {
@@ -253,83 +133,10 @@ void clearEEPROM()
     }
 }
     
-void menu()
+void resetNode()
 {
-    int button = NO_BUTTON;
-    int prevCursor = 0;
-    int cursor = 0;
-    long now = 0;
-
-    mydisp.clearScreen();
-    displayMenu();
-
-    now = millis();
-
-    while(1)
-    {
-        if (millis() > (now + 10000))
-        {
-            mydisp.clearScreen();
-            displayReadings();
-            goto resetMenu;
-        }	
-
-        button = getButtonPress();
-        if (button != NO_BUTTON)
-        {
-            switch(button)
-            {
-                case BUTTON_UP:
-                    if (cursor > 0)
-                    {
-                        prevCursor = cursor;
-                        cursor--;
-                        changeCursor(prevCursor, cursor);
-                    }
-                    break;
-                case BUTTON_DOWN:
-                    if (cursor < END_OF_LIST)
-                    {
-                        prevCursor = cursor;
-                        cursor++;
-                        changeCursor(prevCursor, cursor);
-                    }
-                    break;
-                case BUTTON_BACK:
-                    break;
-                case BUTTON_ENTER:
-                    mydisp.clearScreen();
-                    switch(cursor)
-                    {
-                        case READINGS:
-                            displayReadings();
-                            break;
-                        case SENSOR_ID:
-                            displaySensorId();
-                            break;
-                        case DISPLAY_OFF:
-                            mydisp.setBackLight(0);
-                            displayReadings();
-                            break;
-                        case RESET:
-                            clearEEPROM();
-						    //Reset Microcontroller
-						    asm volatile ("  jmp 0");
-                            break;
-                        default:
-                            break;
-                    }
-resetMenu:
-                    mydisp.clearScreen();
-                    displayMenu();
-                    cursor = 0;
-                    prevCursor = 0;
-                    button = NO_BUTTON;
-                    now = millis();
-                    break;
-            }
-        }
-    }
+    clearEEPROM();
+    asm volatile ("  jmp 0");
 }
 
 void setup()
@@ -369,15 +176,19 @@ void setup()
     gw.present(CHILD_ID_CO2, S_AIR_QUALITY);
 
     metric = gw.getConfig().isMetric;
-    
-    //Initialize Display
-    mydisp.clearScreen();
-    mydisp.setFont(51);
+
+    // Register Menu Items
+    menu.registerEntry("Readings", &displayReadings);
+    menu.registerEntry("Sensor ID", &displaySensorId);
+    menu.registerEntry("Display Off", &displayOff);
+    menu.registerEntry("Reset", &resetNode);
+    menu.registerEntry("Test", &displayOff);
+    menu.registerEntry("Test2", &displayOff);
     
     delay(1000);
 }
  
 void loop()
 {
-    menu();
+    menu.runMenu();
 }
