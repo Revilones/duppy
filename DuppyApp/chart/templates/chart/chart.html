@@ -19,7 +19,7 @@ function populateSensors(selectIn, selectOut)
   var idx = selectIn.selectedIndex;
   var sensorType = selectIn[idx].text;
   {
-    $.get("http://localhost:8000/api/sensors/" + sensorType,
+    $.get("http://192.168.0.106:8000/api/sensors/" + sensorType,
           function(data, status) {
       fillSelect(data, selectOut)
     });
@@ -86,16 +86,33 @@ function initializeChart() {
   });
 }
 
+// Return an array of the selected opion values
+// select is an HTML select element
+function getSelectValues(select) {
+  var result = [];
+  var options = select && select.options;
+  var opt;
+
+  for (var i=0, iLen=options.length; i<iLen; i++) {
+    opt = options[i];
+
+    if (opt.selected) {
+      result.push(opt);
+    }
+  }
+  return result;
+}
+
 function addToChart(selectIn) {
-  // var idx = selectIn.selectedIndex;
-  // var sensor = gSensors[idx-1];
   var chart = $('#chart').highcharts();
   var dateRange = formatDateRange(
     document.forms["dateRange"]["Date Range"].value
   );
 
-  // To Do: limit sensors to add to the selected, NOT all gSensors
-  gSensors.map(function(s) {
+  var selected = getSelectValues(selectIn); 
+
+  selected.map(function(opt) {
+    s = gSensors[opt.index-1];
     if (typeof s != "undefined") {
       // Remove duplicate sensor in case of new desired date range
       var duplicateSensor = chart.get(s.node_id + "." + s.sensor_id)
@@ -117,7 +134,7 @@ function addToChart(selectIn) {
       if (firstAxis) chart.get("default-axis").remove();
 
       // Add sensor data series to chart
-      $.getJSON("http://localhost:8000/api/controllers/" + s.controller_id
+      $.getJSON("http://192.168.0.106:8000/api/controllers/" + s.controller_id
                 + "/nodes/" + s.node_id + "/sensors/" + s.sensor_id + "/data/"
                 + dateRange, function( data ) {
         var series = formatData(data);

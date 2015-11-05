@@ -334,8 +334,8 @@ class SensorSetView(APIView):
         sensor_name = obj.get("sensor_name")
         sensor_type = obj.get("sensor_type")
         if not sensor_name:
-            sensor_name = "New %s sensor #%s" % \
-                (sensor_type,
+            sensor_name = "New Node %s: %s sensor #%s" % \
+                (node, sensor_type,
                  (models.Sensor.objects.filter(
                         node=node,
                         sensor_type=sensor_type).count() + 1))
@@ -391,16 +391,13 @@ class SensorSetTypeView(APIView):
     def get(self, request, sensor_type):
 
         sensors = models.Sensor.objects.filter(sensor_type=sensor_type)
-        #sensors = models.Sensor.objects.all()
 
         response = [Sensor(
                         controller_id=sensor.node.controller.controller_id,
                         node_id=sensor.node.node_id,
                         sensor_id=sensor.sensor_id,
                         sensor_type=sensor.sensor_type,
-                        name=sensor.name,
-                        latest_data=sensor.data_set.latest("created").payload,
-                        last_update=sensor.data_set.latest("created").created)
+                        name=sensor.name)
                     for sensor in sensors]
 
         serializer = SensorSerializer(response, many=True)
