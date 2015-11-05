@@ -170,10 +170,21 @@ void setup()
     // Send the Sketch Version Information to the Gateway
     gw.sendSketchInfo("Bespin", "1.0");
 
-    // Register all sensors to gw (they will be created as child devices)
-    gw.present(CHILD_ID_HUM, S_HUM);
-    gw.present(CHILD_ID_TEMP, S_TEMP);
-    gw.present(CHILD_ID_CO2, S_AIR_QUALITY);
+    // Register all active sensors to gw
+    error = readHumidity(&gDHT, &fHumidity);
+    if (error == SUCCESS) {
+        gw.present(CHILD_ID_HUM, S_HUM);
+    }
+
+    error = readTemperature(&gDHT, metric, &temperature);
+    if (error == SUCCESS) {
+        gw.present(CHILD_ID_TEMP, S_TEMP);
+    }
+
+    error = readCo2(gK_30, &co2);
+    if (error == SUCCESS) {
+        gw.present(CHILD_ID_CO2, S_AIR_QUALITY);
+    }
 
     metric = gw.getConfig().isMetric;
 
