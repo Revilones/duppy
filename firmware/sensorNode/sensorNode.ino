@@ -171,6 +171,10 @@ void setup()
     gw.sendSketchInfo("Bespin", "1.0");
 
     // Register all active sensors to gw
+    int error = 0;
+    float temperature = 0;
+    float fHumidity = 0;
+    double co2 = 0;
     error = readHumidity(&gDHT, &fHumidity);
     if (error == SUCCESS) {
         gw.present(CHILD_ID_HUM, S_HUM);
