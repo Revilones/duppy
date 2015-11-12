@@ -5145,45 +5145,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="33" y1="14" x2="33" y2="0" width="0.127" layer="21"/>
 <wire x1="33" y1="0" x2="0" y2="0" width="0.127" layer="21"/>
 </package>
-<package name="DFN6-3X3">
-<description>&lt;b&gt;6-Lead Plastic Dual Flat No Lead Package&lt;/b&gt; - 3x3 mm Body [DFN]&lt;br&gt;
-&lt;br&gt;
-Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7006-A10.pdf"&gt;http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7006-A10.pdf&lt;/a&gt;</description>
-<smd name="4" x="1.45" y="-1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
-<smd name="5" x="1.45" y="0" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
-<smd name="6" x="1.45" y="1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
-<smd name="1" x="-1.45" y="1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
-<smd name="2" x="-1.45" y="0" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
-<smd name="3" x="-1.45" y="-1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
-<smd name="EXP" x="0" y="0" dx="1.6" dy="2.5" layer="1" stop="no" cream="no"/>
-<rectangle x1="-0.6" y1="-1.05" x2="0.6" y2="1.05" layer="31"/>
-<wire x1="1.5" y1="1.5" x2="1.5" y2="-1.5" width="0.1016" layer="51"/>
-<rectangle x1="-1.5" y1="1.36" x2="-1.1" y2="1.5" layer="21"/>
-<wire x1="-1.5" y1="-1.5" x2="-1.5" y2="1.5" width="0.1016" layer="51"/>
-<wire x1="1.5" y1="1.5" x2="-1.5" y2="1.5" width="0.1524" layer="21"/>
-<rectangle x1="-0.85" y1="-1.3" x2="0.85" y2="1.3" layer="29"/>
-<rectangle x1="0.975" y1="0.725" x2="1.925" y2="1.275" layer="29"/>
-<rectangle x1="0.975" y1="-0.275" x2="1.925" y2="0.275" layer="29"/>
-<rectangle x1="0.975" y1="-1.275" x2="1.925" y2="-0.725" layer="29"/>
-<rectangle x1="-1.925" y1="0.725" x2="-0.975" y2="1.275" layer="29"/>
-<rectangle x1="-1.925" y1="-0.275" x2="-0.975" y2="0.275" layer="29"/>
-<rectangle x1="-1.925" y1="-1.275" x2="-0.975" y2="-0.725" layer="29"/>
-<rectangle x1="1.05" y1="0.8" x2="1.85" y2="1.2" layer="31"/>
-<rectangle x1="1.05" y1="-0.2" x2="1.85" y2="0.2" layer="31"/>
-<rectangle x1="1.05" y1="-1.2" x2="1.85" y2="-0.8" layer="31"/>
-<rectangle x1="-1.85" y1="0.8" x2="-1.05" y2="1.2" layer="31"/>
-<rectangle x1="-1.85" y1="-0.2" x2="-1.05" y2="0.2" layer="31"/>
-<rectangle x1="-1.85" y1="-1.2" x2="-1.05" y2="-0.8" layer="31"/>
-<wire x1="1.5" y1="1.36" x2="1.5" y2="1.5" width="0.1524" layer="21"/>
-<wire x1="-1.5" y1="-1.5" x2="-1.5" y2="-1.36" width="0.1524" layer="21"/>
-<wire x1="1.5" y1="-1.5" x2="1.5" y2="-1.36" width="0.1524" layer="21"/>
-<wire x1="-1.5" y1="1.36" x2="-1.5" y2="1.5" width="0.1524" layer="21"/>
-<wire x1="1.5" y1="1.5" x2="-1.5" y2="1.5" width="0.1016" layer="51"/>
-<wire x1="1.5" y1="-1.5" x2="-1.5" y2="-1.5" width="0.1016" layer="51"/>
-<wire x1="1.5" y1="-1.5" x2="-1.5" y2="-1.5" width="0.1524" layer="21"/>
-<text x="-1.45" y="1.9" size="1.27" layer="25">&gt;NAME</text>
-<text x="-1.45" y="-3.2" size="1.27" layer="27">&gt;VALUE</text>
-</package>
 <package name="K-30">
 <wire x1="18.415" y1="1.905" x2="17.78" y2="1.27" width="0.2032" layer="21"/>
 <wire x1="15.875" y1="1.905" x2="15.24" y2="1.27" width="0.2032" layer="21"/>
@@ -5415,20 +5376,6 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <pin name="GND@1" x="-17.78" y="5.08" length="middle"/>
 <pin name="GND@2" x="20.32" y="5.08" length="middle" rot="R180"/>
 </symbol>
-<symbol name="SI7006/20/21/50/53/54/55">
-<wire x1="-10.16" y1="5.08" x2="10.16" y2="5.08" width="0.254" layer="94"/>
-<wire x1="10.16" y1="5.08" x2="10.16" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="10.16" y1="-5.08" x2="-10.16" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="-10.16" y1="-5.08" x2="-10.16" y2="5.08" width="0.254" layer="94"/>
-<text x="-10.16" y="6.35" size="1.778" layer="95">&gt;NAME</text>
-<text x="-10.16" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="SDA" x="-12.7" y="2.54" length="short"/>
-<pin name="DNC" x="-12.7" y="-2.54" length="short" direction="nc"/>
-<pin name="GND" x="-12.7" y="0" length="short" direction="pwr"/>
-<pin name="VDD" x="12.7" y="0" length="short" direction="pwr" rot="R180"/>
-<pin name="DNC@1" x="12.7" y="-2.54" length="short" direction="nc" rot="R180"/>
-<pin name="SCL" x="12.7" y="2.54" length="short" direction="in" rot="R180"/>
-</symbol>
 <symbol name="K-30">
 <wire x1="1.27" y1="-7.62" x2="2.54" y2="-7.62" width="0.6096" layer="94"/>
 <wire x1="1.27" y1="-10.16" x2="2.54" y2="-10.16" width="0.6096" layer="94"/>
@@ -5574,52 +5521,6 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 </device>
 </devices>
 </deviceset>
-<deviceset name="SI7021-*" prefix="IC">
-<description>&lt;b&gt;I&lt;sup&gt;2&lt;/sup&gt;C Humidity and Temperature Sensor&lt;/b&gt;&lt;br&gt;
-&lt;br&gt;
-Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7021.pdf"&gt;http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7021.pdf&lt;/a&gt;</description>
-<gates>
-<gate name="G$1" symbol="SI7006/20/21/50/53/54/55" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="DFN6-3X3">
-<connects>
-<connect gate="G$1" pin="DNC" pad="3"/>
-<connect gate="G$1" pin="DNC@1" pad="4"/>
-<connect gate="G$1" pin="GND" pad="2"/>
-<connect gate="G$1" pin="SCL" pad="6"/>
-<connect gate="G$1" pin="SDA" pad="1"/>
-<connect gate="G$1" pin="VDD" pad="5"/>
-</connects>
-<technologies>
-<technology name="A10-GM">
-<attribute name="MF" value="Silicon Labs" constant="no"/>
-<attribute name="MPN" value="Si7021-A10-GM" constant="no"/>
-<attribute name="OC_FARNELL" value="2422571" constant="no"/>
-<attribute name="OC_NEWARK" value="55X3111" constant="no"/>
-</technology>
-<technology name="A10-GM1">
-<attribute name="MF" value="Silicon Labs" constant="no"/>
-<attribute name="MPN" value="Si7021-A10-GM1" constant="no"/>
-<attribute name="OC_FARNELL" value="2422570" constant="no"/>
-<attribute name="OC_NEWARK" value="55X3112" constant="no"/>
-</technology>
-<technology name="A10-IM">
-<attribute name="MF" value="Silicon Labs" constant="no"/>
-<attribute name="MPN" value="Si7021-A10-IM" constant="no"/>
-<attribute name="OC_FARNELL" value="2422573" constant="no"/>
-<attribute name="OC_NEWARK" value="55X3113" constant="no"/>
-</technology>
-<technology name="A10-IM1">
-<attribute name="MF" value="Silicon Labs" constant="no"/>
-<attribute name="MPN" value="Si7021-A10-IM1" constant="no"/>
-<attribute name="OC_FARNELL" value="2422572" constant="no"/>
-<attribute name="OC_NEWARK" value="55X3114" constant="no"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="K-30" prefix="JP">
 <description>0.1" spaced headers</description>
 <gates>
@@ -5684,6 +5585,169 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 </deviceset>
 </devicesets>
 </library>
+<library name="duppy_common">
+<packages>
+<package name="JST-B4B-ED-A">
+<text x="0.7788" y="11.9388" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<pad name="1" x="1.905" y="9.4996" drill="1.016" diameter="1.651"/>
+<pad name="2" x="1.905" y="7.0104" drill="1.016" diameter="1.651"/>
+<pad name="3" x="1.905" y="4.4958" drill="1.016" diameter="1.651"/>
+<pad name="4" x="1.905" y="2.0066" drill="1.016" diameter="1.651"/>
+<wire x1="0" y1="0" x2="0" y2="11.5" width="0.127" layer="21"/>
+<wire x1="0" y1="11.5" x2="3.8" y2="11.5" width="0.127" layer="21"/>
+<wire x1="3.8" y1="11.5" x2="3.8" y2="0" width="0.127" layer="21"/>
+<wire x1="3.8" y1="0" x2="0" y2="0" width="0.127" layer="21"/>
+</package>
+</packages>
+<symbols>
+<symbol name="JST-B4B-EH-A">
+<wire x1="12.7" y1="0" x2="12.7" y2="12.7" width="0.4064" layer="94"/>
+<text x="-1.27" y="13.462" size="1.778" layer="95">JST-B4B-EH-A</text>
+<wire x1="0" y1="12.7" x2="12.7" y2="12.7" width="0.4064" layer="94"/>
+<wire x1="2.54" y1="5.08" x2="1.27" y2="5.08" width="0.6096" layer="94"/>
+<wire x1="2.54" y1="7.62" x2="1.27" y2="7.62" width="0.6096" layer="94"/>
+<wire x1="2.54" y1="10.16" x2="1.27" y2="10.16" width="0.6096" layer="94"/>
+<wire x1="0" y1="12.7" x2="0" y2="0" width="0.4064" layer="94"/>
+<wire x1="12.7" y1="0" x2="0" y2="0" width="0.4064" layer="94"/>
+<wire x1="2.54" y1="2.54" x2="1.27" y2="2.54" width="0.6096" layer="94"/>
+<pin name="1" x="-3.81" y="10.16" length="middle"/>
+<pin name="2" x="-3.81" y="7.62" length="middle"/>
+<pin name="3" x="-3.81" y="5.08" length="middle"/>
+<pin name="4" x="-3.81" y="2.54" length="middle"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="JST-B4B-EH-A">
+<gates>
+<gate name="G$1" symbol="JST-B4B-EH-A" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="JST-B4B-ED-A">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
+<connect gate="G$1" pin="4" pad="4"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
+<library name="si70xx-10">
+<description>&lt;b&gt;Silicon Labs Si70xx Humidity and Temperature Sensors&lt;/b&gt;&lt;br&gt;
+&lt;br&gt;
+Version 1.0&lt;br&gt;
+(c) 2014 Samuel Lourenço</description>
+<packages>
+<package name="DFN6-3X3">
+<description>&lt;b&gt;6-Lead Plastic Dual Flat No Lead Package&lt;/b&gt; - 3x3 mm Body [DFN]&lt;br&gt;
+&lt;br&gt;
+Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7006-A10.pdf"&gt;http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7006-A10.pdf&lt;/a&gt;</description>
+<smd name="4" x="1.45" y="-1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="5" x="1.45" y="0" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="6" x="1.45" y="1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="1" x="-1.45" y="1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="2" x="-1.45" y="0" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="3" x="-1.45" y="-1" dx="0.85" dy="0.45" layer="1" stop="no" cream="no"/>
+<smd name="EXP" x="0" y="0" dx="1.6" dy="2.5" layer="1" stop="no" cream="no"/>
+<rectangle x1="-0.6" y1="-1.05" x2="0.6" y2="1.05" layer="31"/>
+<wire x1="1.5" y1="1.5" x2="1.5" y2="-1.5" width="0.1016" layer="51"/>
+<rectangle x1="-1.5" y1="1.36" x2="-1.1" y2="1.5" layer="21"/>
+<wire x1="-1.5" y1="-1.5" x2="-1.5" y2="1.5" width="0.1016" layer="51"/>
+<wire x1="1.5" y1="1.5" x2="-1.5" y2="1.5" width="0.1524" layer="21"/>
+<rectangle x1="-0.85" y1="-1.3" x2="0.85" y2="1.3" layer="29"/>
+<rectangle x1="0.975" y1="0.725" x2="1.925" y2="1.275" layer="29"/>
+<rectangle x1="0.975" y1="-0.275" x2="1.925" y2="0.275" layer="29"/>
+<rectangle x1="0.975" y1="-1.275" x2="1.925" y2="-0.725" layer="29"/>
+<rectangle x1="-1.925" y1="0.725" x2="-0.975" y2="1.275" layer="29"/>
+<rectangle x1="-1.925" y1="-0.275" x2="-0.975" y2="0.275" layer="29"/>
+<rectangle x1="-1.925" y1="-1.275" x2="-0.975" y2="-0.725" layer="29"/>
+<rectangle x1="1.05" y1="0.8" x2="1.85" y2="1.2" layer="31"/>
+<rectangle x1="1.05" y1="-0.2" x2="1.85" y2="0.2" layer="31"/>
+<rectangle x1="1.05" y1="-1.2" x2="1.85" y2="-0.8" layer="31"/>
+<rectangle x1="-1.85" y1="0.8" x2="-1.05" y2="1.2" layer="31"/>
+<rectangle x1="-1.85" y1="-0.2" x2="-1.05" y2="0.2" layer="31"/>
+<rectangle x1="-1.85" y1="-1.2" x2="-1.05" y2="-0.8" layer="31"/>
+<wire x1="1.5" y1="1.36" x2="1.5" y2="1.5" width="0.1524" layer="21"/>
+<wire x1="-1.5" y1="-1.5" x2="-1.5" y2="-1.36" width="0.1524" layer="21"/>
+<wire x1="1.5" y1="-1.5" x2="1.5" y2="-1.36" width="0.1524" layer="21"/>
+<wire x1="-1.5" y1="1.36" x2="-1.5" y2="1.5" width="0.1524" layer="21"/>
+<wire x1="1.5" y1="1.5" x2="-1.5" y2="1.5" width="0.1016" layer="51"/>
+<wire x1="1.5" y1="-1.5" x2="-1.5" y2="-1.5" width="0.1016" layer="51"/>
+<wire x1="1.5" y1="-1.5" x2="-1.5" y2="-1.5" width="0.1524" layer="21"/>
+<text x="-1.45" y="1.9" size="1.27" layer="25">&gt;NAME</text>
+<text x="-1.45" y="-3.2" size="1.27" layer="27">&gt;VALUE</text>
+</package>
+</packages>
+<symbols>
+<symbol name="SI7006/20/21/50/53/54/55">
+<wire x1="-10.16" y1="5.08" x2="10.16" y2="5.08" width="0.254" layer="94"/>
+<wire x1="10.16" y1="5.08" x2="10.16" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-5.08" x2="-10.16" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-10.16" y1="-5.08" x2="-10.16" y2="5.08" width="0.254" layer="94"/>
+<text x="-10.16" y="6.35" size="1.778" layer="95">&gt;NAME</text>
+<text x="-10.16" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="SDA" x="-12.7" y="2.54" length="short"/>
+<pin name="DNC" x="-12.7" y="-2.54" length="short" direction="nc"/>
+<pin name="GND" x="-12.7" y="0" length="short" direction="pwr"/>
+<pin name="VDD" x="12.7" y="0" length="short" direction="pwr" rot="R180"/>
+<pin name="DNC@1" x="12.7" y="-2.54" length="short" direction="nc" rot="R180"/>
+<pin name="SCL" x="12.7" y="2.54" length="short" direction="in" rot="R180"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="SI7021-*" prefix="IC">
+<description>&lt;b&gt;I&lt;sup&gt;2&lt;/sup&gt;C Humidity and Temperature Sensor&lt;/b&gt;&lt;br&gt;
+&lt;br&gt;
+Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7021.pdf"&gt;http://www.silabs.com/Support%20Documents/TechnicalDocs/Si7021.pdf&lt;/a&gt;</description>
+<gates>
+<gate name="G$1" symbol="SI7006/20/21/50/53/54/55" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="DFN6-3X3">
+<connects>
+<connect gate="G$1" pin="DNC" pad="3"/>
+<connect gate="G$1" pin="DNC@1" pad="4"/>
+<connect gate="G$1" pin="GND" pad="2"/>
+<connect gate="G$1" pin="SCL" pad="6"/>
+<connect gate="G$1" pin="SDA" pad="1"/>
+<connect gate="G$1" pin="VDD" pad="5"/>
+</connects>
+<technologies>
+<technology name="A10-GM">
+<attribute name="MF" value="Silicon Labs" constant="no"/>
+<attribute name="MPN" value="Si7021-A10-GM" constant="no"/>
+<attribute name="OC_FARNELL" value="2422571" constant="no"/>
+<attribute name="OC_NEWARK" value="55X3111" constant="no"/>
+</technology>
+<technology name="A10-GM1">
+<attribute name="MF" value="Silicon Labs" constant="no"/>
+<attribute name="MPN" value="Si7021-A10-GM1" constant="no"/>
+<attribute name="OC_FARNELL" value="2422570" constant="no"/>
+<attribute name="OC_NEWARK" value="55X3112" constant="no"/>
+</technology>
+<technology name="A10-IM">
+<attribute name="MF" value="Silicon Labs" constant="no"/>
+<attribute name="MPN" value="Si7021-A10-IM" constant="no"/>
+<attribute name="OC_FARNELL" value="2422573" constant="no"/>
+<attribute name="OC_NEWARK" value="55X3113" constant="no"/>
+</technology>
+<technology name="A10-IM1">
+<attribute name="MF" value="Silicon Labs" constant="no"/>
+<attribute name="MPN" value="Si7021-A10-IM1" constant="no"/>
+<attribute name="OC_FARNELL" value="2422572" constant="no"/>
+<attribute name="OC_NEWARK" value="55X3114" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -5718,10 +5782,10 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <part name="GND11" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="PWR" library="SparkFun-LED" deviceset="LED" device="0603"/>
 <part name="CO2" library="bespin" deviceset="K-30" device="K-30"/>
-<part name="ENTER" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="PTH"/>
-<part name="BACK" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="PTH"/>
-<part name="UP" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="PTH"/>
-<part name="DOWN" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="PTH"/>
+<part name="ENTER" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="SIDE_EZ" value="SWITCH-MOMENTARY-2SIDE_EZ"/>
+<part name="BACK" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="SIDE_EZ" value="SWITCH-MOMENTARY-2SIDE_EZ"/>
+<part name="UP" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="SIDE_EZ" value="SWITCH-MOMENTARY-2SIDE_EZ"/>
+<part name="DOWN" library="SparkFun-Electromechanical" deviceset="SWITCH-MOMENTARY-2" device="SIDE_EZ" value="SWITCH-MOMENTARY-2SIDE_EZ"/>
 <part name="R2" library="SparkFun-Resistors" deviceset="1KOHM-1/10W-1%(0603)" device="" value="1K"/>
 <part name="R6" library="SparkFun-Resistors" deviceset="1KOHM-1/10W-1%(0603)" device="" value="1K"/>
 <part name="R7" library="SparkFun-Resistors" deviceset="1KOHM-1/10W-1%(0603)" device="" value="1K"/>
@@ -5737,8 +5801,11 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <part name="R9" library="SparkFun-Resistors" deviceset="1KOHM-1/10W-1%(0603)" device="" value="1M"/>
 <part name="C6" library="SparkFun-Capacitors" deviceset="22PF-50V-5%(0603)" device="" value="22pF"/>
 <part name="U$2" library="bespin" deviceset="NRF24L01" device=""/>
-<part name="OPAMP_CO" library="bespin" deviceset="SI7021-*" device="" technology="A10-GM"/>
 <part name="SCREEN" library="bespin" deviceset="JST-B5B-EH-A" device=""/>
+<part name="LIGHT" library="duppy_common" deviceset="JST-B4B-EH-A" device=""/>
+<part name="IC2" library="si70xx-10" deviceset="SI7021-*" device="" technology="A10-IM" value="SI7021-A10-IM"/>
+<part name="C7" library="SparkFun-Capacitors" deviceset="0.1UF-25V(+80/-20%)(0603)" device="" value="0.1uF"/>
+<part name="GND4" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -5788,8 +5855,11 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <instance part="R9" gate="G$1" x="76.2" y="12.7" rot="R90"/>
 <instance part="C6" gate="G$1" x="83.82" y="12.7"/>
 <instance part="U$2" gate="A" x="213.36" y="50.8"/>
-<instance part="OPAMP_CO" gate="G$1" x="213.36" y="165.1"/>
 <instance part="SCREEN" gate="JST-5" x="160.02" y="147.32"/>
+<instance part="LIGHT" gate="G$1" x="198.12" y="134.62"/>
+<instance part="IC2" gate="G$1" x="205.74" y="170.18"/>
+<instance part="C7" gate="G$1" x="226.06" y="162.56" rot="R180"/>
+<instance part="GND4" gate="1" x="226.06" y="152.4"/>
 </instances>
 <busses>
 </busses>
@@ -5876,14 +5946,23 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <label x="83.82" y="40.64" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="OPAMP_CO" gate="G$1" pin="VDD"/>
-<wire x1="226.06" y1="165.1" x2="231.14" y2="165.1" width="0.1524" layer="91"/>
-<label x="228.6" y="165.1" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="SCREEN" gate="JST-5" pin="1"/>
 <wire x1="156.21" y1="160.02" x2="149.86" y2="160.02" width="0.1524" layer="91"/>
 <label x="149.86" y="160.02" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="LIGHT" gate="G$1" pin="1"/>
+<wire x1="194.31" y1="144.78" x2="185.42" y2="144.78" width="0.1524" layer="91"/>
+<label x="185.42" y="144.78" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="IC2" gate="G$1" pin="VDD"/>
+<wire x1="218.44" y1="170.18" x2="226.06" y2="170.18" width="0.1524" layer="91"/>
+<wire x1="226.06" y1="170.18" x2="226.06" y2="165.1" width="0.1524" layer="91"/>
+<pinref part="C7" gate="G$1" pin="2"/>
+<wire x1="226.06" y1="170.18" x2="233.68" y2="170.18" width="0.1524" layer="91"/>
+<junction x="226.06" y="170.18"/>
+<label x="228.6" y="170.18" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -6008,14 +6087,24 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <label x="83.82" y="38.1" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="OPAMP_CO" gate="G$1" pin="GND"/>
-<wire x1="200.66" y1="165.1" x2="195.58" y2="165.1" width="0.1524" layer="91"/>
-<label x="195.58" y="165.1" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="SCREEN" gate="JST-5" pin="5"/>
 <wire x1="156.21" y1="149.86" x2="149.86" y2="149.86" width="0.1524" layer="91"/>
 <label x="149.86" y="149.86" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="IC2" gate="G$1" pin="GND"/>
+<wire x1="193.04" y1="170.18" x2="185.42" y2="170.18" width="0.1524" layer="91"/>
+<label x="185.42" y="170.18" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="LIGHT" gate="G$1" pin="4"/>
+<wire x1="194.31" y1="137.16" x2="185.42" y2="137.16" width="0.1524" layer="91"/>
+<label x="185.42" y="137.16" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="C7" gate="G$1" pin="1"/>
+<wire x1="226.06" y1="157.48" x2="226.06" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="GND4" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="RX" class="0">
@@ -6158,13 +6247,6 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <label x="241.3" y="58.42" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="DTHP" class="0">
-<segment>
-<wire x1="137.16" y1="121.92" x2="144.78" y2="121.92" width="0.1524" layer="91"/>
-<label x="142.24" y="121.92" size="1.778" layer="95"/>
-<pinref part="U1" gate="U$1" pin="PC3(ADC3)"/>
-</segment>
-</net>
 <net name="N$1" class="0">
 <segment>
 <pinref part="Y1" gate="G$1" pin="2"/>
@@ -6194,14 +6276,19 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <pinref part="U1" gate="U$1" pin="PC4(ADC4/SDA)"/>
 </segment>
 <segment>
-<pinref part="OPAMP_CO" gate="G$1" pin="SDA"/>
-<wire x1="200.66" y1="167.64" x2="195.58" y2="167.64" width="0.1524" layer="91"/>
-<label x="195.58" y="167.64" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="SCREEN" gate="JST-5" pin="2"/>
 <wire x1="156.21" y1="157.48" x2="149.86" y2="157.48" width="0.1524" layer="91"/>
 <label x="149.86" y="157.48" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="IC2" gate="G$1" pin="SDA"/>
+<wire x1="193.04" y1="172.72" x2="185.42" y2="172.72" width="0.1524" layer="91"/>
+<label x="185.42" y="172.72" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="LIGHT" gate="G$1" pin="2"/>
+<wire x1="194.31" y1="142.24" x2="185.42" y2="142.24" width="0.1524" layer="91"/>
+<label x="185.42" y="142.24" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SCL" class="0">
@@ -6211,14 +6298,19 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <pinref part="U1" gate="U$1" pin="PC5(ADC5/SCL)"/>
 </segment>
 <segment>
-<pinref part="OPAMP_CO" gate="G$1" pin="SCL"/>
-<wire x1="226.06" y1="167.64" x2="231.14" y2="167.64" width="0.1524" layer="91"/>
-<label x="228.6" y="167.64" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="SCREEN" gate="JST-5" pin="3"/>
 <wire x1="156.21" y1="154.94" x2="149.86" y2="154.94" width="0.1524" layer="91"/>
 <label x="149.86" y="154.94" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="IC2" gate="G$1" pin="SCL"/>
+<wire x1="218.44" y1="172.72" x2="226.06" y2="172.72" width="0.1524" layer="91"/>
+<label x="223.52" y="172.72" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="LIGHT" gate="G$1" pin="3"/>
+<wire x1="194.31" y1="139.7" x2="185.42" y2="139.7" width="0.1524" layer="91"/>
+<label x="185.42" y="139.7" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="5V" class="0">
@@ -6389,6 +6481,7 @@ Source: &lt;a href="http://www.silabs.com/Support%20Documents/TechnicalDocs/Si70
 <approved hash="208,1,81.28,144.78,VCC,sup,,,,"/>
 <approved hash="208,1,73.66,144.78,VCC,sup,,,,"/>
 <approved hash="208,1,45.72,172.72,VCC,out,,,,"/>
+<approved hash="208,1,66.04,177.8,VCC,sup,,,,"/>
 <approved hash="208,1,96.52,154.94,VCC,sup,,,,"/>
 <approved hash="208,1,154.94,81.28,VCC,sup,,,,"/>
 <approved hash="113,1,24.9746,101.795,PGM(SERIAL),,,,,"/>
