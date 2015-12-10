@@ -1,5 +1,6 @@
 
 #include <duppyTypes.h>
+#include "duppyButton.h"
 #include <DigoleSerial.h>
 
 #define MAX_ENTRIES 10
@@ -20,7 +21,6 @@ class DuppyMenu
         menu_entry _menu[MAX_ENTRIES];
         DigoleSerialDisp *_myDisp;
         int _menuCount;
-        int _cursor;
         int _frame;
         void drawCursor(int index);
         void initCursor();

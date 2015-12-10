@@ -1,17 +1,17 @@
 #define _Digole_Serial_I2C_
 
-#ifndef __PIC32MX__
+#include <duppyTypes.h>
+
 #include <PinChangeInt.h>
-#endif
 #include <EEPROM.h>
 #include <SPI.h>
 #include <Wire.h>
 
-#include <duppyTypes.h>
-#include <kSeries.h>
 #include <MySensor.h>
-#include <DHT.h>
+#include <kSeries.h>
 #include <DigoleSerial.h>
+#include <SI7021.h>
+#include <Adafruit_TSL2561_U.h>
 
 #include "duppySensor.h"
 #include "duppyMenu.h"
@@ -20,82 +20,34 @@
 #define CHILD_ID_HUM 0
 #define CHILD_ID_TEMP 1
 #define CHILD_ID_CO2 2
+#define CHILD_ID_CO 3
+#define CHILD_ID_LUX 4
 
-#define HUMIDITY_SENSOR_DIGITAL_PIN A3
 #define STATUS_LED A2
 #define LCD_BL 50
 
-#define SENSOR_INTERVAL 60000 //Delay between sensor readings
-
 DigoleSerialDisp mydisp(&Wire,'\x27');
-DuppyMenu menu(&mydisp);
 MySensor gw;
-DHT gDHT;
-kSeries gK_30(3,4);
-boolean metric = true; 
+
 MyMessage msgHum(CHILD_ID_HUM, V_HUM);
 MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
 MyMessage msgCo2(CHILD_ID_CO2, V_GAS);
+MyMessage msgCO(CHILD_ID_CO, V_GAS);
+MyMessage msgLux(CHILD_ID_LUX, V_LIGHT);
+
+SI7021 gDHT;
+kSeries gK_30(3,4);
+Adafruit_TSL2561_Unified gTSL = Adafruit_TSL2561_Unified(TSL2561_ADDR_LOW);
+int CO_PIN = A0;
+
+DuppyMenu menu(&mydisp);
+DuppySensor sensors(&mydisp, &gw);
 
 void displayReadings()
 {
-    int error = 0;
-    long now = 0;
-    int button = NO_BUTTON;
-    float temperature = 0;
-    float fHumidity = 0;
-    double co2 = 0;
-
-    while(1)
-    {
-        error = readHumidity(&gDHT, &fHumidity);
-        if (error == SUCCESS) {
-            gw.send(msgHum.set(fHumidity, 1));
-        }
-        
-        error = readTemperature(&gDHT, metric, &temperature);
-        if (error == SUCCESS) {
-            gw.send(msgTemp.set(temperature, 1));
-        }
-        
-        error = readCo2(gK_30, &co2);
-        if (error == SUCCESS) {
-            gw.send(msgCo2.set(co2, 1));
-        }
-        
-        digitalWrite(STATUS_LED, !digitalRead(STATUS_LED));
-    
-        mydisp.setFont(10);
-        mydisp.setPrintPos(0, 1, _TEXT_);
-        mydisp.nextTextLine();
-        mydisp.setFont(51);
-        mydisp.print("Hum: ");
-        mydisp.print(fHumidity);
-        mydisp.nextTextLine();
-        mydisp.setFont(18);
-        mydisp.nextTextLine();
-        mydisp.setFont(51);
-        mydisp.print("Tmp: ");
-        mydisp.print(temperature);
-        mydisp.nextTextLine();
-        mydisp.setFont(18);
-        mydisp.nextTextLine();
-        mydisp.setFont(51);
-        mydisp.print("Co2: ");
-        mydisp.print(co2);
-    
-        now = millis();
-        while((now + SENSOR_INTERVAL) > millis())
-        {
-            gw.process();
-            button = getButtonPress();
-            if (button != NO_BUTTON)
-            {
-                mydisp.setBackLight(LCD_BL);
-                return;
-            }
-        }
-    }
+    sensors.sensorView();
+    mydisp.setBackLight(LCD_BL);
+    return;
 }
 
 void displaySensorId()
@@ -158,11 +110,21 @@ void setup()
     //Setup Display
     mydisp.begin();
     mydisp.displayConfig(1);
-    mydisp.setI2CAddress(0x29);
+    //mydisp.setI2CAddress(0x27);
     mydisp.clearScreen();
     mydisp.setBackLight(LCD_BL);
 
-    gDHT.setup(HUMIDITY_SENSOR_DIGITAL_PIN); 
+    gDHT.begin();
+
+    //Initialize Lux Sensor
+    if(gTSL.begin())
+    {
+        gTSL.enableAutoRange(true); /* Auto-gain ... switches automatically between 1x and 16x */
+        gTSL.setIntegrationTime(TSL2561_INTEGRATIONTIME_13MS);      /* fast but low resolution */
+    }
+
+    //Init CO Pin
+    pinMode(CHILD_ID_CO, INPUT);
 
     //Initialize Gateway 
     gw.begin(NULL, AUTO/*Node Id*/, true/*Repeater Mode*/, AUTO/*Parent Node Id*/);
@@ -172,35 +134,47 @@ void setup()
 
     // Register all active sensors to gw
     int error = 0;
-    float temperature = 0;
-    float fHumidity = 0;
+    double temperature = 0;
+    double humidity = 0;
     double co2 = 0;
-    error = readHumidity(&gDHT, &fHumidity);
+    double co = 0;
+    double lux = 0;
+
+    error = readHumidity((void*)&gDHT, &humidity);
     if (error == SUCCESS) {
         gw.present(CHILD_ID_HUM, S_HUM);
+        sensors.registerEntry("Hum: ", (void*)&gDHT, &msgHum, &readHumidity);
     }
 
-    error = readTemperature(&gDHT, metric, &temperature);
+    error = readTemperature((void*)&gDHT, &temperature);
     if (error == SUCCESS) {
         gw.present(CHILD_ID_TEMP, S_TEMP);
+        sensors.registerEntry("Tmp: ", (void*)&gDHT, &msgTemp, &readTemperature);
     }
 
-    error = readCo2(gK_30, &co2);
+    error = readCo2((void*)&gK_30, &co2);
     if (error == SUCCESS) {
         gw.present(CHILD_ID_CO2, S_AIR_QUALITY);
+        sensors.registerEntry("Co2: ", (void*)&gK_30, &msgCo2, &readCo2);
     }
 
-    metric = gw.getConfig().isMetric;
+    error = readCO((void*)&CO_PIN, &co);
+    if (error == SUCCESS) {
+        gw.present(CHILD_ID_CO, S_AIR_QUALITY);
+        sensors.registerEntry("CO: ", (void*)&CO_PIN, &msgCO, &readCO);
+    }
+
+    error = readLux((void*)&gTSL, &lux);
+    if (error == SUCCESS) {
+        gw.present(CHILD_ID_LUX, S_LIGHT_LEVEL);
+        sensors.registerEntry("Lux: ", (void*)&gTSL, &msgLux, &readLux);
+    }
 
     // Register Menu Items
     menu.registerEntry("Readings", &displayReadings);
     menu.registerEntry("Sensor ID", &displaySensorId);
     menu.registerEntry("Display Off", &displayOff);
     menu.registerEntry("Reset", &resetNode);
-    menu.registerEntry("Test", &displayOff);
-    menu.registerEntry("Test2", &displayOff);
-    
-    delay(1000);
 }
  
 void loop()

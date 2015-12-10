@@ -1,20 +1,12 @@
 
 #include "duppyMenu.h"
-#include "duppyButton.h"
 
 #define MAX_DISPLAYED 3
-
-#define READINGS      0
-#define SENSOR_ID     1
-#define DISPLAY_OFF   2
-#define RESET         3 
-#define END_OF_LIST   3
 
 DuppyMenu::DuppyMenu(DigoleSerialDisp *display)
 {
     _myDisp = display;
     _menuCount = 0; 
-    _cursor = 0;
     _frame = 0;
 }
 
